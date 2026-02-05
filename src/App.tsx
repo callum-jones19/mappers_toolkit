@@ -28,7 +28,7 @@ function App() {
   const [lines, setLines] = useState<Line[]>([]);
   
   const displayToast = useMemo(() => {
-	if (activeAction === 'PlacePoint') {
+	if (activeAction === 'PlacePoint' || activeAction === 'PlaceLine') {
 		return true;
 	} else {
 		return false;
@@ -40,6 +40,8 @@ function App() {
 		return "";
 	} else if (activeAction === "PlacePoint") {
 		return "Left click the map to place a point at the cursor's location"
+	} else if (activeAction === "PlaceLine") {
+		return "Left click to place the next vertex of the line. Double click to place the next vertex and complete the line."
 	} else {
 		return "";
 	}
@@ -49,6 +51,8 @@ function App() {
   // Temporary states
   // Track a new line as it is being drawn.
   const [drawingLine, setDrawingLine] = useState<Line | null>(null);
+  const [ghostLine, setGhostLine] = useState<Line | null>(null);
+  const [ghostPoint, setGhostPoint] = useState<Point | null>(null);
 
 
   // Generated layer data
@@ -57,7 +61,7 @@ function App() {
 	  source: 'drawingLineData',
 	  type: 'line',
 	  paint: {
-		  "line-color": "#FFFFFF",
+		  "line-color": "#000000",
 		  "line-width": 2,
 	  }
   };
@@ -74,14 +78,13 @@ function App() {
 	}
   }, [drawingLine]);
 
-
   // Confirmed, drawn lines
   const lineLayer: LineLayerSpecification = {
 	  id: 'line-layer-1',
 	  source: 'linedata',
 	  type: 'line',
 	  paint: {
-		  "line-color": "#FFFFFF",
+		  "line-color": "#000000",
 		  "line-width": 2,
 	  }
   };
@@ -95,10 +98,17 @@ function App() {
 			const lineStr = lineString(lineToPositionArr, { name: 'test' });
 			return lineStr;
 		});
+
+		// Add the ghost line
+		if (ghostLine) {
+			const ghostLineStr = lineString(ghostLine.points.map(p => [p.longitude, p.latitude]), { name: 'ghostLine' });
+			allLinesAsGeoJson.push(ghostLineStr);
+		}
+		
 		const consolidatedGeoJsons = featureCollection(allLinesAsGeoJson);
 		return consolidatedGeoJsons;
 	}
-  }, [lines]);
+  }, [lines, ghostLine]);
 
   return (
     <>
@@ -197,12 +207,25 @@ function App() {
 				  setLat(e.viewState.latitude);
 				  setZoom(e.viewState.zoom);
 			  }}
-			  mapStyle="https://tiles.versatiles.org/assets/styles/shadow/style.json"
+			  mapStyle="https://tiles.versatiles.org/assets/styles/colorful/style.json"
+			  onMouseMove={e => {
+				if (activeAction === 'PlaceLine') {
+					if (drawingLine && drawingLine.points.length > 0) {
+						const currCursorPoint: Point = { latitude: e.lngLat.lat, longitude: e.lngLat.lng };
+						const ghostLine: Line = { points: [ drawingLine.points[drawingLine.points.length - 1], currCursorPoint ] };
+						setGhostLine(ghostLine);
+					}
+				} else if (activeAction === 'PlacePoint') {
+					const currCursorPoint: Point = { latitude: e.lngLat.lat, longitude: e.lngLat.lng };
+					setGhostPoint(currCursorPoint);
+				}
+			  }}
 			  onClick={e => {
 				  if (activeAction === 'PlacePoint') {
 					  const newPoint: Point = { latitude: e.lngLat.lat, longitude: e.lngLat.lng };
 					  setPoints([...points, newPoint]);
 					  setActiveAction('Default');
+					  setGhostPoint(null);
 				  } else if (activeAction === 'DeletePoint') {
 					  console.log(e.type);
 				  } else if (activeAction === 'PlaceLine') {
@@ -223,6 +246,7 @@ function App() {
 						  setLines([...lines, drawingLine]);
 						  setDrawingLine(null);
 						  setActiveAction('Default')
+						  setGhostLine(null);
 					  }
 				  }
 			  }}	
@@ -241,6 +265,11 @@ function App() {
 					<Source id="drawingLineData" type='geojson' data={drawingLineGeoJson}>
 						<Layer {...drawingLineLayer}/>
 					</Source>
+				}
+				{ghostPoint &&
+					<Marker longitude={ghostPoint.longitude} latitude={ghostPoint.latitude}>
+						<MapPin className='text-white fill-neutral-500' />
+					</Marker>
 				}
 			</Map>
 		</div>
