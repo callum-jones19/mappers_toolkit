@@ -138,7 +138,8 @@ function App() {
 				<details open className='w-full'>
 					<summary className='font-bold'>Erase</summary>
 					<button
-						className={`mt-2 w-full p-1 ${activeAction === 'DeletePoint' ? "bg-neutral-400 animate-pulse" : "bg-neutral-100 hover:bg-neutral-200"} rounded-t-sm`}
+						disabled
+						className={`mt-2 disabled:bg-neutral-500 disabled:text-neutral-400 w-full p-1 ${activeAction === 'DeletePoint' ? "bg-neutral-400 animate-pulse" : "bg-neutral-100 hover:bg-neutral-200"} rounded-t-sm`}
 						onClick={() => {
 							if (activeAction !== 'DeletePoint') {
 								setActiveAction("DeletePoint");
@@ -150,7 +151,8 @@ function App() {
 						Erase point
 					</button>
 					<button
-						className={`mt-1 w-full p-1 bg-neutral-100 hover:bg-neutral-200 rounded-b-sm`}
+						disabled={points.length === 0}
+						className={`mt-1 w-full disabled:bg-neutral-500 disabled:text-neutral-400 p-1 bg-neutral-100 hover:bg-neutral-200 rounded-b-sm`}
 						onClick={() => {
 							setPoints([]);
 						}}
@@ -158,7 +160,8 @@ function App() {
 						Erase all points
 					</button>
 					<button
-						className={`mt-1 w-full p-1 bg-neutral-100 hover:bg-neutral-200 rounded-b-sm`}
+						disabled={lines.length === 0}
+						className={`mt-1 w-full disabled:bg-neutral-500 disabled:text-neutral-400 p-1 bg-neutral-100 hover:bg-neutral-200 rounded-b-sm`}
 						onClick={() => {
 							setLines([]);
 						}}
