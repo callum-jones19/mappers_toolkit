@@ -171,7 +171,10 @@ function App() {
 						disabled={points.length === 0}
 						className={`mt-1 w-full disabled:bg-neutral-500 disabled:text-neutral-400 p-1 bg-neutral-100 hover:bg-neutral-200 rounded-b-sm`}
 						onClick={() => {
-							setPoints([]);
+							const shouldDelete = confirm("Are you sure you want to delete all points? This cannot be undone.");
+							if (shouldDelete) {
+								setPoints([]);
+							}
 						}}
 					>
 						Erase all points
@@ -180,7 +183,10 @@ function App() {
 						disabled={lines.length === 0}
 						className={`mt-1 w-full disabled:bg-neutral-500 disabled:text-neutral-400 p-1 bg-neutral-100 hover:bg-neutral-200 rounded-b-sm`}
 						onClick={() => {
-							setLines([]);
+							const shouldDelete = confirm("Are you sure you want to delete all lines? This cannot be undone.");
+							if (shouldDelete) {
+								setLines([]);
+							}
 						}}
 					>
 						Erase all lines
