@@ -123,6 +123,7 @@ function App() {
 						onClick={() => {
 							if (activeAction === 'PlacePoint') {
 								setActiveAction('Default');
+								setGhostPoint(null);
 							} else {
 								setActiveAction('PlacePoint')
 							}
@@ -136,6 +137,8 @@ function App() {
 						onClick={() => {
 							if (activeAction === 'PlaceLine') {
 								setActiveAction('Default');
+								setDrawingLine(null);
+								setGhostLine(null);
 							} else {
 								setActiveAction('PlaceLine');
 							}
