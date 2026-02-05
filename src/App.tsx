@@ -51,7 +51,6 @@ function App() {
   // Temporary states
   // Track a new line as it is being drawn.
   const [drawingLine, setDrawingLine] = useState<Line | null>(null);
-  const [ghostLine, setGhostLine] = useState<Line | null>(null);
   const [ghostPoint, setGhostPoint] = useState<Point | null>(null);
 
 
@@ -69,14 +68,24 @@ function App() {
   const drawingLineGeoJson = useMemo(() => {
   	if (drawingLine === null) {
 		return null;
-	} else if (drawingLine !== null && drawingLine.points.length > 1) {
+	} else if (drawingLine !== null && drawingLine.points.length > 0) {
 		const lineToPositionArr = drawingLine.points.map(p => [p.longitude, p.latitude]);
-		const lineStr = lineString(lineToPositionArr, { name: 'drawingLine' });
-		return lineStr;
+
+		// Add the ghost line
+		if (ghostPoint) {
+			lineToPositionArr.push([ghostPoint.longitude, ghostPoint.latitude]);
+		}
+
+		if (lineToPositionArr.length > 1) {
+			const lineStr = lineString(lineToPositionArr, { name: 'drawingLine' });
+			return lineStr;
+		} else {
+			return null;
+		}
 	} else {
 		return null;
 	}
-  }, [drawingLine]);
+  }, [drawingLine, ghostPoint]);
 
   // Confirmed, drawn lines
   const lineLayer: LineLayerSpecification = {
@@ -99,16 +108,11 @@ function App() {
 			return lineStr;
 		});
 
-		// Add the ghost line
-		if (ghostLine) {
-			const ghostLineStr = lineString(ghostLine.points.map(p => [p.longitude, p.latitude]), { name: 'ghostLine' });
-			allLinesAsGeoJson.push(ghostLineStr);
-		}
 		
 		const consolidatedGeoJsons = featureCollection(allLinesAsGeoJson);
 		return consolidatedGeoJsons;
 	}
-  }, [lines, ghostLine]);
+  }, [lines]);
 
   return (
     <>
@@ -138,7 +142,7 @@ function App() {
 							if (activeAction === 'PlaceLine') {
 								setActiveAction('Default');
 								setDrawingLine(null);
-								setGhostLine(null);
+								setGhostPoint(null);
 							} else {
 								setActiveAction('PlaceLine');
 							}
@@ -213,10 +217,10 @@ function App() {
 			  mapStyle="https://tiles.versatiles.org/assets/styles/colorful/style.json"
 			  onMouseMove={e => {
 				if (activeAction === 'PlaceLine') {
+					console.log(drawingLine);
 					if (drawingLine && drawingLine.points.length > 0) {
 						const currCursorPoint: Point = { latitude: e.lngLat.lat, longitude: e.lngLat.lng };
-						const ghostLine: Line = { points: [ drawingLine.points[drawingLine.points.length - 1], currCursorPoint ] };
-						setGhostLine(ghostLine);
+						setGhostPoint(currCursorPoint);
 					}
 				} else if (activeAction === 'PlacePoint') {
 					const currCursorPoint: Point = { latitude: e.lngLat.lat, longitude: e.lngLat.lng };
@@ -249,7 +253,7 @@ function App() {
 						  setLines([...lines, drawingLine]);
 						  setDrawingLine(null);
 						  setActiveAction('Default')
-						  setGhostLine(null);
+						  setGhostPoint(null);
 					  }
 				  }
 			  }}	
