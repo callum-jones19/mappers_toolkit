@@ -1,4 +1,5 @@
-import { Map, Marker } from '@vis.gl/react-maplibre';
+import { featureCollection, lineString } from '@turf/turf';
+import { Layer, Map, Marker, Source, type LineLayerSpecification, type SourceSpecification } from '@vis.gl/react-maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useMemo, useState } from 'react';
 import { Info, MapPin } from 'react-feather';
@@ -8,9 +9,9 @@ interface Point {
 	longitude: number;
 }
 
-// interface Line {
-// 	points: Point[];
-// }
+interface Line {
+	points: Point[];
+}
 
 type ActiveAction = "Default" | "PlacePoint" | "PlaceLine" | "PlacePolygon" | "DeletePoint";
 
@@ -24,7 +25,7 @@ function App() {
   // App state
   const [activeAction, setActiveAction] = useState<ActiveAction>("Default");
   const [points, setPoints] = useState<Point[]>([]);
-  // const [lines, setLines] = useState<Line[]>([]);
+  const [lines, setLines] = useState<Line[]>([]);
   
   const displayToast = useMemo(() => {
 	if (activeAction === 'PlacePoint') {
@@ -39,10 +40,65 @@ function App() {
 		return "";
 	} else if (activeAction === "PlacePoint") {
 		return "Left click the map to place a point at the cursor's location"
+	} else {
+		return "";
 	}
   }, [activeAction]);
 
 
+  // Temporary states
+  // Track a new line as it is being drawn.
+  const [drawingLine, setDrawingLine] = useState<Line | null>(null);
+
+
+  // Generated layer data
+  const drawingLineLayer: LineLayerSpecification = {
+	  id: 'drawingLineLayer',
+	  source: 'drawingLineData',
+	  type: 'line',
+	  paint: {
+		  "line-color": "#FFFFFF",
+		  "line-width": 2,
+	  }
+  };
+
+  const drawingLineGeoJson = useMemo(() => {
+  	if (drawingLine === null) {
+		return null;
+	} else if (drawingLine !== null && drawingLine.points.length > 1) {
+		const lineToPositionArr = drawingLine.points.map(p => [p.longitude, p.latitude]);
+		const lineStr = lineString(lineToPositionArr, { name: 'drawingLine' });
+		return lineStr;
+	} else {
+		return null;
+	}
+  }, [drawingLine]);
+
+
+  // Confirmed, drawn lines
+  const lineLayer: LineLayerSpecification = {
+	  id: 'line-layer-1',
+	  source: 'linedata',
+	  type: 'line',
+	  paint: {
+		  "line-color": "#FFFFFF",
+		  "line-width": 2,
+	  }
+  };
+
+  const lineGeoJson = useMemo(() => {
+  	if (lines.length === 0) {
+		return null;
+	} else {
+		const allLinesAsGeoJson = lines.map(targetLine => {
+			const lineToPositionArr = targetLine.points.map(p => [p.longitude, p.latitude]);
+			const lineStr = lineString(lineToPositionArr, { name: 'test' });
+			return lineStr;
+		});
+		const consolidatedGeoJsons = featureCollection(allLinesAsGeoJson);
+		return consolidatedGeoJsons;
+	}
+  }, [lines]);
 
   return (
     <>
@@ -65,7 +121,18 @@ function App() {
 						Add point
 					</button>
 					<button disabled className='mt-1 disabled:bg-neutral-500 disabled:text-neutral-400 w-full p-1 hover:bg-neutral-200 bg-neutral-100'>Add polygon</button>
-					<button disabled className='mt-1 disabled:bg-neutral-500 disabled:text-neutral-400 w-full p-1 hover:bg-neutral-200 bg-neutral-100'>Add line</button>
+					<button
+						className={`mt-2 w-full p-1 ${activeAction === 'PlaceLine' ? "bg-neutral-400 animate-pulse" : "bg-neutral-100 hover:bg-neutral-200"} rounded-t-sm`}
+						onClick={() => {
+							if (activeAction === 'PlaceLine') {
+								setActiveAction('Default');
+							} else {
+								setActiveAction('PlaceLine');
+							}
+						}}
+					>
+						Add line
+					</button>
 					<button disabled className='mt-1 disabled:bg-neutral-500 disabled:text-neutral-400 w-full p-1 hover:bg-neutral-200 bg-neutral-100 rounded-b-sm'>Import GeoJSON</button>
 				</details>
 				<details open className='w-full'>
@@ -89,6 +156,14 @@ function App() {
 						}}
 					>
 						Erase all points
+					</button>
+					<button
+						className={`mt-1 w-full p-1 bg-neutral-100 hover:bg-neutral-200 rounded-b-sm`}
+						onClick={() => {
+							setLines([]);
+						}}
+					>
+						Erase all lines
 					</button>
 				</details>
 			</div>
@@ -127,14 +202,43 @@ function App() {
 					  setActiveAction('Default');
 				  } else if (activeAction === 'DeletePoint') {
 					  console.log(e.type);
+				  } else if (activeAction === 'PlaceLine') {
+					  const newLine: Line = { points: [{ latitude: e.lngLat.lat, longitude: e.lngLat.lng }] };
+				  	  if (drawingLine === null) {
+						  // Start drawing from scratch
+						  setDrawingLine(newLine);
+					  } else {
+						  // Add on to existing drawing line
+						  setDrawingLine({points: [...drawingLine.points, { latitude: e.lngLat.lat, longitude: e.lngLat.lng }]});
+					  }
 				  }
 			  }}
+			  onDblClick={e => {
+				  if (activeAction === 'PlaceLine') {
+					  e.preventDefault();
+					  if (drawingLine !== null) {
+						  setLines([...lines, drawingLine]);
+						  setDrawingLine(null);
+						  setActiveAction('Default')
+					  }
+				  }
+			  }}	
 			>
 				{points.map(point => (
 					<Marker longitude={point.longitude} latitude={point.latitude}>
 						<MapPin className='text-white fill-neutral-500' />
 					</Marker>
 				))}
+				{lineGeoJson &&
+					<Source id="linedata" type='geojson' data={lineGeoJson}>
+						<Layer {...lineLayer} />
+					</Source>
+				}
+				{drawingLineGeoJson &&
+					<Source id="drawingLineData" type='geojson' data={drawingLineGeoJson}>
+						<Layer {...drawingLineLayer}/>
+					</Source>
+				}
 			</Map>
 		</div>
 	  </div>
