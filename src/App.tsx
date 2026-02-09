@@ -15,20 +15,14 @@ interface Line {
 
 type ActiveAction = "Default" | "PlacePoint" | "PlaceLine" | "PlacePolygon" | "DeletePoint";
 
-interface WorkflowNode<I, O> {
-	processFunction: (input: I) => O;
-	nextNode: WorkflowNode<O, unknown> | null;
-}
-
 function App() {
-
-	/* 
-	 * A workflow is a series of steps that can either return void (do nothing),
-	 * a valid geoJson (put it onto the map), a string (display it in the workflow
+  /*
+   * A workflow is a series of steps that can either return void (do nothing),
+   * a valid geoJson (put it onto the map), a string (display it in the workflow
    * window), or a number (display it in the workflow window).
-	 * 
-	 * Each step may have: an input, an output and a processing function
-	*/
+   *
+   * Each step may have: an input, an output and a processing function
+   */
 
   // Map state
   const [lat, setLat] = useState<number>(-33);
@@ -320,44 +314,6 @@ function App() {
                 </Marker>
               )}
           </Map>
-        </div>
-        <div id="workflows" className="bg-white w-md h-full p-2 flex flex-col">
-          <h2 className="w-full text-center font-bold mb-4">Workflow</h2>
-          <div id="pipeline-container" className="w-full basis-full flex flex-col">
-            <button
-							className="border-dashed border-2 border-neutral-400 rounded-md p-2 flex justify-center items-center hover:bg-neutral-200"
-							onClick={() => {
-								const node1: WorkflowNode<number, number> = {
-									processFunction: i => i + 2,
-									nextNode: null,
-								};
-
-								const node2: WorkflowNode<number, string> = {
-									processFunction: i => "Help: " + i,
-									nextNode: null,
-								};
-
-								const node3: WorkflowNode<string, number> = {
-									processFunction: i => parseInt(i.split(" ")[1]),
-									nextNode: null,
-								};
-
-								node1.nextNode = node2;
-								node2.nextNode = node3;
-
-								let currentNode: any = node1;
-								let startInput = 24;
-								console.log(startInput)
-								while (currentNode !== null) {
-									startInput = currentNode.processFunction(startInput);
-									currentNode = currentNode.nextNode;
-									console.log(startInput)
-								}
-							}}
-						>
-              <Plus></Plus>
-            </button>
-          </div>
         </div>
       </div>
     </>
