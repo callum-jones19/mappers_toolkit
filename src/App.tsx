@@ -302,8 +302,8 @@ function App() {
                 </Marker>
               )}
 						{
-							geojsons.map(currGeojson => (
-								<Source id="geojsons" type="geojson" data={currGeojson}>
+							geojsons.map((currGeojson, i) => (
+								<Source key={i} id="geojsons" type="geojson" data={currGeojson}>
 									<Layer {...geojsonsFillLayer} />
 									<Layer {...geojsonsLineLayer} />
 									<Layer {...geojsonsSymbolLayer} />
