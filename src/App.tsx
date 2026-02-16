@@ -136,7 +136,7 @@ function App() {
               <button
                 className={`mt-2 w-full p-1 ${
                   activeAction === "AddPoint" ? "bg-neutral-400 animate-pulse" : "bg-neutral-100 hover:bg-neutral-200"
-                } rounded-t-sm`}
+                } rounded-t-sm border-b border-neutral-300`}
                 onClick={() => {
                   if (activeAction === "AddPoint") {
                     setActiveAction("Pan");
@@ -150,14 +150,14 @@ function App() {
               </button>
               <button
                 disabled
-                className="mt-1 disabled:bg-neutral-500 disabled:text-neutral-400 w-full p-1 hover:bg-neutral-200 bg-neutral-100"
+                className="disabled:bg-neutral-500 disabled:text-neutral-400 w-full p-1 hover:bg-neutral-200 bg-neutral-100"
               >
                 Add polygon
               </button>
               <button
                 className={`mt-2 w-full p-1 ${
                   activeAction === "AddLine" ? "bg-neutral-400 animate-pulse" : "bg-neutral-100 hover:bg-neutral-200"
-                } rounded-t-sm`}
+                } rounded-t-sm border-b border-neutral-300`}
                 onClick={() => {
                   if (activeAction === "AddLine") {
                     setActiveAction("Pan");
