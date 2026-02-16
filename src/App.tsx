@@ -1,5 +1,14 @@
-import { featureCollection, lineString, type AllGeoJSON } from "@turf/turf";
-import { type CircleLayerSpecification, type FillLayerSpecification, Layer, type LineLayerSpecification, Map, Marker, Source, type SymbolLayerSpecification } from "@vis.gl/react-maplibre";
+import { type AllGeoJSON, featureCollection, lineString } from "@turf/turf";
+import {
+  type CircleLayerSpecification,
+  type FillLayerSpecification,
+  Layer,
+  type LineLayerSpecification,
+  Map,
+  Marker,
+  Source,
+  type SymbolLayerSpecification,
+} from "@vis.gl/react-maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useMemo, useState } from "react";
 import { MapPin } from "react-feather";
@@ -26,7 +35,7 @@ function App() {
   const [activeAction, setActiveAction] = useState<ActiveAction>("Pan");
   const [points, setPoints] = useState<Point[]>([]);
   const [lines, setLines] = useState<Line[]>([]);
-	const [geojsons, setGeojsons] = useState<AllGeoJSON[]>([]);
+  const [geojsons, setGeojsons] = useState<AllGeoJSON[]>([]);
 
   // Temporary states
   // Track a new line as it is being drawn.
@@ -44,38 +53,38 @@ function App() {
     },
   };
 
-	const geojsonsFillLayer: FillLayerSpecification = {
-		id: "geojsonsFillLayer",
-		source: "geojsons",
-		type: "fill",
-		paint: {
-			"fill-color": "#61616180",
-		},
-		filter: ["==", ["geometry-type"], "Polygon"],
-	};
+  const geojsonsFillLayer: FillLayerSpecification = {
+    id: "geojsonsFillLayer",
+    source: "geojsons",
+    type: "fill",
+    paint: {
+      "fill-color": "#61616180",
+    },
+    filter: ["==", ["geometry-type"], "Polygon"],
+  };
 
-	const geojsonsLineLayer: LineLayerSpecification = {
-		id: "geojsonsLineLayer",
-		source: "geojsons",
-		type: "line",
-		"paint": {
-			"line-color": "#616161",
-			"line-width": 2,
-		}
-	}
-	
-	const geojsonsSymbolLayer: SymbolLayerSpecification = {
-		id: "geojsonsSymbolLayer",
-		source: "geojsons",
-		type: "symbol",
-		layout: {
-			"icon-image": "pin-marker",
-		},
-		paint: {
-			"icon-color": "#616161",
-		},
-		filter: ["==", ["geometry-type"], "Point"]
-	}
+  const geojsonsLineLayer: LineLayerSpecification = {
+    id: "geojsonsLineLayer",
+    source: "geojsons",
+    type: "line",
+    "paint": {
+      "line-color": "#616161",
+      "line-width": 2,
+    },
+  };
+
+  const geojsonsSymbolLayer: SymbolLayerSpecification = {
+    id: "geojsonsSymbolLayer",
+    source: "geojsons",
+    type: "symbol",
+    layout: {
+      "icon-image": "pin-marker",
+    },
+    paint: {
+      "icon-color": "#616161",
+    },
+    filter: ["==", ["geometry-type"], "Point"],
+  };
 
   const drawingLineGeoJson = useMemo(() => {
     if (drawingLine === null) {
@@ -215,14 +224,14 @@ function App() {
             zoom={zoom}
             pitch={0}
             bearing={0}
-						onLoad={e => {
-							const res = e.target.loadImage('https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png');
-							res.then(d => {
-								e.target.addImage('pin-marker', d.data);
-							}).catch(e => {
-								throw e
-							});
-						}}
+            onLoad={e => {
+              const res = e.target.loadImage("https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png");
+              res.then(d => {
+                e.target.addImage("pin-marker", d.data);
+              }).catch(e => {
+                throw e;
+              });
+            }}
             onDrag={e => {
               setLat(e.viewState.latitude);
               setLng(e.viewState.longitude);
@@ -301,15 +310,13 @@ function App() {
                   <MapPin className="text-white fill-neutral-500" />
                 </Marker>
               )}
-						{
-							geojsons.map((currGeojson, i) => (
-								<Source key={i} id="geojsons" type="geojson" data={currGeojson}>
-									<Layer {...geojsonsFillLayer} />
-									<Layer {...geojsonsLineLayer} />
-									<Layer {...geojsonsSymbolLayer} />
-								</Source>
-							))
-						}
+            {geojsons.map((currGeojson, i) => (
+              <Source key={i} id="geojsons" type="geojson" data={currGeojson}>
+                <Layer {...geojsonsFillLayer} />
+                <Layer {...geojsonsLineLayer} />
+                <Layer {...geojsonsSymbolLayer} />
+              </Source>
+            ))}
           </Map>
         </div>
         <div id="context-window" className="w-md h-full flex flex-col p-2 gap-2">
@@ -320,7 +327,7 @@ function App() {
             newGeojsonContext={{
               onCreateGeojson: newGeojson => {
                 console.log(newGeojson);
-								setGeojsons([...geojsons, newGeojson]);
+                setGeojsons([...geojsons, newGeojson]);
               },
             }}
           />
