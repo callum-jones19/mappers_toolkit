@@ -51,7 +51,7 @@ export default function ContextMenu({
               {eraseContext.erasablePoints.map(point => (
                 <button
                   className="bg-neutral-100 hover:bg-neutral-300 p-2"
-                  key={point.latitude + "," + point.longitude}
+                  key={point.latitude.toString() + "," + point.longitude.toString()}
                   onClick={() => {
                     const pointsMinusRemoved = eraseContext
                       .erasablePoints

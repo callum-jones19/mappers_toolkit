@@ -1,6 +1,5 @@
 import { type AllGeoJSON, featureCollection, lineString } from "@turf/turf";
 import {
-  type CircleLayerSpecification,
   type FillLayerSpecification,
   Layer,
   type LineLayerSpecification,
@@ -89,7 +88,7 @@ function App() {
   const drawingLineGeoJson = useMemo(() => {
     if (drawingLine === null) {
       return null;
-    } else if (drawingLine !== null && drawingLine.points.length > 0) {
+    } else if (drawingLine.points.length > 0) {
       const lineToPositionArr = drawingLine.points.map(p => [p.longitude, p.latitude]);
 
       // Add the ghost line
@@ -228,7 +227,7 @@ function App() {
               const res = e.target.loadImage("https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png");
               res.then(d => {
                 e.target.addImage("pin-marker", d.data);
-              }).catch(e => {
+              }).catch((e: unknown) => {
                 throw e;
               });
             }}
@@ -310,8 +309,8 @@ function App() {
                   <MapPin className="text-white fill-neutral-500" />
                 </Marker>
               )}
-            {geojsons.map((currGeojson, i) => (
-              <Source key={i} id="geojsons" type="geojson" data={currGeojson}>
+            {geojsons.map(currGeojson => (
+              <Source key={JSON.stringify(currGeojson)} id="geojsons" type="geojson" data={currGeojson}>
                 <Layer {...geojsonsFillLayer} />
                 <Layer {...geojsonsLineLayer} />
                 <Layer {...geojsonsSymbolLayer} />
@@ -323,7 +322,12 @@ function App() {
           <h2 className="text-center font-bold">Context Menu</h2>
           <ContextMenu
             currentActiveAction={activeAction}
-            eraseContext={{ erasablePoints: points, onErasePoint: newPoints => setPoints(newPoints) }}
+            eraseContext={{
+              erasablePoints: points,
+              onErasePoint: newPoints => {
+                setPoints(newPoints);
+              },
+            }}
             newGeojsonContext={{
               onCreateGeojson: newGeojson => {
                 console.log(newGeojson);
