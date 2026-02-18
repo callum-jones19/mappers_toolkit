@@ -3,6 +3,7 @@ import { type AllGeoJSON } from "@turf/turf";
 import { useState } from "react";
 import type { ActiveAction, Point } from "./App";
 import MappingButton from "./ui/MappingButton";
+import { X } from "react-feather";
 
 export interface EraseContext {
   erasablePoints: Point[];
@@ -16,12 +17,14 @@ export interface NewGeoJsonContext {
 
 export interface ContxtMenuProps {
   currentActiveAction: ActiveAction;
+	onChangeActiveAction: (newActive: ActiveAction) => void;
   eraseContext: EraseContext;
   newGeojsonContext: NewGeoJsonContext;
 }
 
 export default function ContextMenu({
   currentActiveAction,
+	onChangeActiveAction,
   eraseContext,
   newGeojsonContext,
 }: ContxtMenuProps) {
@@ -31,8 +34,26 @@ export default function ContextMenu({
 
   return (
     <>
-      <div className="w-full h-full flex flex-col gap-1 p-2">
-        <p>Currently active: {currentActiveAction}</p>
+      <div className="w-full h-full flex flex-col gap-1">
+				<div className="bg-neutral-200 p-2 w-full border-b border-neutral-600 flex flex-row justify-between items-center">
+					<p className="font-bold">{
+						currentActiveAction === 'Pan' ? 'Scene' :
+							currentActiveAction === 'AddPoint' ? 'Add Point' :
+							currentActiveAction === 'AddLine' ? 'Add Line' :
+							currentActiveAction === 'AddGeojson' ? 'Add GeoJSON' :
+							currentActiveAction === 'AddPolygon' ? 'Add Polygon' :
+							currentActiveAction
+					}</p>
+					<MappingButton
+						hidden={currentActiveAction === 'Pan'}
+						onClick={() => {
+							onChangeActiveAction('Pan');
+						}}
+						className="w-fit hover:bg-neutral-400">
+						<X />
+					</MappingButton>
+				</div>
+				<div className="w-full basis-full flex flex-col gap-2">
         {currentActiveAction === "Erase"
           && (
             <>
@@ -105,6 +126,7 @@ export default function ContextMenu({
               </MappingButton>
             </div>
           )}
+				</div>
       </div>
     </>
   );

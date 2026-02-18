@@ -315,6 +315,9 @@ function App() {
                 setPoints(newPoints);
               },
             }}
+						onChangeActiveAction={newAction => {
+							setActiveAction(newAction);
+						}}
             newGeojsonContext={{
               onCreateGeojson: newGeojson => {
                 console.log(newGeojson);
