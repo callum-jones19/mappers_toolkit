@@ -39,7 +39,7 @@ export default function ContextMenu({
   return (
     <>
       <div className="w-full h-full flex flex-col gap-1">
-        <div className="bg-blue-600 text-white py-2 px-1 h-12 w-full border-b border-neutral-600 flex flex-row justify-between items-center">
+        <div className="py-2 px-1 h-12 w-full border-b border-neutral-400 flex flex-row justify-between items-center">
           <p className="font-bold">
             {"Map"}
             <span className="font-normal">
@@ -117,7 +117,7 @@ export default function ContextMenu({
                           <MappingButton
                             disabled={newGeojson.length === 0}
                             type="button"
-                            className="disabled:bg-neutral-300 disabled:text-neutral-500 bg-green-300 p-2"
+                            className="disabled:bg-neutral-300 disabled:text-neutral-500 border border-neutral-400 hover:bg-blue-600 hover:text-white font-bold p-2"
                             onClick={() => {
                               try {
                                 console.log(newGeojson);
