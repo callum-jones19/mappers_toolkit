@@ -39,7 +39,7 @@ export default function ContextMenu({
   return (
     <>
       <div className="w-full h-full flex flex-col gap-1">
-        <div className="bg-neutral-200 p-2 w-full border-b border-neutral-600 flex flex-row justify-between items-center">
+        <div className="bg-blue-600 text-white p-2 w-full border-b border-neutral-600 flex flex-row justify-between items-center">
           <p className="font-bold">
             {"Map"}
             <span className="font-normal">
@@ -61,7 +61,7 @@ export default function ContextMenu({
             onClick={() => {
               onChangeActiveAction("Pan");
             }}
-            className="w-fit hover:bg-neutral-400"
+            className="w-fit hover:bg-white hover:text-blue-600"
             type="button"
           >
             <X />
@@ -98,7 +98,7 @@ export default function ContextMenu({
                           setCurrentGeojsonMode("IMPORT");
                         }}
                       >
-                        Import
+                        Upload
                       </MappingButton>
                     </div>
                     {currentGeojsonMode === "JSON"

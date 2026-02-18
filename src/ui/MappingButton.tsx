@@ -10,8 +10,8 @@ export interface MappingButtonProps
 export default function MappingButton({ isActive, children, ...buttonProps }: MappingButtonProps) {
   return (
     <button
-      className={`w-full p-1 disabled:bg-neutral-400 disabled:text-neutral-600 disabled:cursor-not-allowed ${
-        isActive ? "bg-blue-600 text-white font-semibold" : "hover:bg-neutral-200"
+      className={`text-start w-full px-1 py-2 disabled:bg-white disabled:italic disabled:text-neutral-600 disabled:cursor-not-allowed ${
+        isActive ? "bg-blue-600 text-white font-semibold" : "hover:bg-blue-600 hover:text-blue-100"
       }`}
       {...buttonProps}
     >
