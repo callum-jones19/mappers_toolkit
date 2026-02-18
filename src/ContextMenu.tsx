@@ -27,7 +27,7 @@ type AddGeojsonOptions = "JSON" | "IMPORT";
 export default function ContextMenu({
   currentActiveAction,
   onChangeActiveAction,
-  eraseContext,
+  // eraseContext,
   newGeojsonContext,
 }: ContxtMenuProps) {
   // If AddGeojson context, validate that the entered geojson is valid.
@@ -56,15 +56,16 @@ export default function ContextMenu({
                 : " > " + currentActiveAction}
             </span>
           </p>
-          <MappingButton
+          <button
             hidden={currentActiveAction === "Pan"}
             onClick={() => {
               onChangeActiveAction("Pan");
             }}
-            className="w-fit hover:bg-neutral-400"
+            className="w-fit hover:bg-blue-600 hover:text-white hover:font-bold"
+						type='button'
           >
             <X />
-          </MappingButton>
+          </button>
         </div>
         <div className="w-full basis-full flex flex-col gap-2">
           {currentActiveAction === "Pan"
