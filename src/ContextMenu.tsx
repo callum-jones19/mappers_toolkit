@@ -22,6 +22,8 @@ export interface ContxtMenuProps {
   newGeojsonContext: NewGeoJsonContext;
 }
 
+type AddGeojsonOptions = "JSON" | "IMPORT";
+
 export default function ContextMenu({
   currentActiveAction,
   onChangeActiveAction,
@@ -32,22 +34,27 @@ export default function ContextMenu({
   const [newGeojson, setNewGeojson] = useState<string>("");
   const [lastGeojsonInvalid, setLastGeojsonInvalid] = useState<boolean>(false);
 
+  const [currentGeojsonMode, setCurrentGeojsonMode] = useState<AddGeojsonOptions>("JSON");
+
   return (
     <>
       <div className="w-full h-full flex flex-col gap-1">
         <div className="bg-neutral-200 p-2 w-full border-b border-neutral-600 flex flex-row justify-between items-center">
           <p className="font-bold">
-            {currentActiveAction === "Pan"
-              ? "Scene"
-              : currentActiveAction === "AddPoint"
-              ? "Add Point"
-              : currentActiveAction === "AddLine"
-              ? "Add Line"
-              : currentActiveAction === "AddGeojson"
-              ? "Add GeoJSON"
-              : currentActiveAction === "AddPolygon"
-              ? "Add Polygon"
-              : currentActiveAction}
+            {"Map"}
+            <span className="font-normal">
+              {currentActiveAction === "Pan"
+                ? ""
+                : currentActiveAction === "AddPoint"
+                ? " > Add Point"
+                : currentActiveAction === "AddLine"
+                ? " > Add Line"
+                : currentActiveAction === "AddGeojson"
+                ? " > Add GeoJSON"
+                : currentActiveAction === "AddPolygon"
+                ? " > Add Polygon"
+                : " > " + currentActiveAction}
+            </span>
           </p>
           <MappingButton
             hidden={currentActiveAction === "Pan"}
@@ -60,76 +67,83 @@ export default function ContextMenu({
           </MappingButton>
         </div>
         <div className="w-full basis-full flex flex-col gap-2">
+          {currentActiveAction === "Pan"
+            && (
+              <div className="w-full h-full flex flex-col p-2">
+              </div>
+            )}
           {currentActiveAction === "Erase"
             && (
               <>
-                <MappingButton
-                  className="bg-neutral-100 hover:bg-neutral-200 p-2 rounded-md"
-                  onClick={() => {
-                    const confirmation = confirm(
-                      "Are you sure you want to erase every point on the map? This cannot be undone.",
-                    );
-                    if (confirmation) {
-                      eraseContext.onErasePoint([]);
-                    }
-                  }}
-                >
-                  Erase All
-                </MappingButton>
-                {eraseContext.erasablePoints.map(point => (
-                  <MappingButton
-                    className="bg-neutral-100 hover:bg-neutral-300 p-2"
-                    key={point.latitude.toString() + "," + point.longitude.toString()}
-                    onClick={() => {
-                      const pointsMinusRemoved = eraseContext
-                        .erasablePoints
-                        .filter(p2 => (
-                          p2.latitude !== point.latitude && p2.longitude !== point.longitude
-                        ));
-                      eraseContext.onErasePoint(pointsMinusRemoved);
-                    }}
-                  >
-                    {point.longitude}, {point.latitude}
-                  </MappingButton>
-                ))}
-                {eraseContext.erasablePoints.length === 0
-                  && <p>No points on the map</p>}
               </>
             )}
           {currentActiveAction === "AddGeojson"
             && (
               <>
                 <div className="h-full w-full flex flex-col gap-2 p-2">
-                  <textarea
-                    className={`border ${
-                      lastGeojsonInvalid ? "border-red-300 bg-red-50" : "border-neutral-400"
-                    } h-full w-full resize-none`}
-                    value={newGeojson}
-                    onChange={e => {
-                      setNewGeojson(e.currentTarget.value);
-                      setLastGeojsonInvalid(false);
-                    }}
-                  />
-                  <MappingButton
-                    disabled={newGeojson.length === 0}
-                    type="button"
-										className="disabled:bg-neutral-300 disabled:text-neutral-500 bg-green-300 p-2"
-                    onClick={() => {
-                      try {
-                        console.log(newGeojson);
-                        const parsedGeojson = check(newGeojson);
-                        console.log(parsedGeojson);
-                        newGeojsonContext.onCreateGeojson(parsedGeojson);
-                        setLastGeojsonInvalid(false);
-                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                      } catch (e) {
-                        // FIXME
-                        setLastGeojsonInvalid(true);
-                      }
-                    }}
-                  >
-                    Add GeoJson
-                  </MappingButton>
+                  <div className="w-full h-full flex flex-col">
+                    <div className="w-full flex flex-row">
+                      <MappingButton
+                        isActive={currentGeojsonMode === "JSON"}
+                        onClick={() => {
+                          setCurrentGeojsonMode("JSON");
+                        }}
+                      >
+                        JSON
+                      </MappingButton>
+                      <MappingButton
+                        isActive={currentGeojsonMode === "IMPORT"}
+                        onClick={() => {
+                          setCurrentGeojsonMode("IMPORT");
+                        }}
+                      >
+                        Import
+                      </MappingButton>
+                    </div>
+                    {currentGeojsonMode === "JSON"
+                      && (
+                        <div className="w-full h-full flex flex-col gap-2">
+                          <textarea
+                            className={`border ${
+                              lastGeojsonInvalid ? "border-red-300 bg-red-50" : "border-neutral-400"
+                            } h-full w-full resize-none`}
+                            value={newGeojson}
+                            onChange={e => {
+                              setNewGeojson(e.currentTarget.value);
+                              setLastGeojsonInvalid(false);
+                            }}
+                          />
+                          <MappingButton
+                            disabled={newGeojson.length === 0}
+                            type="button"
+                            className="disabled:bg-neutral-300 disabled:text-neutral-500 bg-green-300 p-2"
+                            onClick={() => {
+                              try {
+                                console.log(newGeojson);
+                                const parsedGeojson = check(newGeojson);
+                                console.log(parsedGeojson);
+                                newGeojsonContext.onCreateGeojson(parsedGeojson);
+                                setLastGeojsonInvalid(false);
+                                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                              } catch (e) {
+                                // FIXME
+                                setLastGeojsonInvalid(true);
+                              }
+                            }}
+                          >
+                            Add GeoJson
+                          </MappingButton>
+                        </div>
+                      )}
+                    {currentGeojsonMode === "IMPORT"
+                      && (
+                        <div className="p-2">
+                          <MappingButton>
+                            Upload file
+                          </MappingButton>
+                        </div>
+                      )}
+                  </div>
                 </div>
               </>
             )}
