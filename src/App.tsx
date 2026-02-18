@@ -141,7 +141,7 @@ function App() {
 					<div className="py-2 px-1 h-12 w-full border-b border-neutral-400 flex flex-row justify-between items-center">
 						<p className="font-bold">Actions</p>
 					</div>
-          <div className="w-full h-full flex flex-col overflow-auto gap-1 pl-2">
+          <div className="w-full h-full flex flex-col overflow-auto gap-1">
             {/* <input */}
             {/*   type="search" */}
             {/*   className="w-full bg-blue-600 text-white p-2 mb-1 sticky" */}
