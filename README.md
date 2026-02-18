@@ -25,7 +25,7 @@ The following commands are provided:
 
 ## Licensing
 
-This app is licensed under the GPL-3.0 license. See (COPYING.md)[./COPYING.md] for
-the license attached to this repository, or the (GNU website)[https://www.gnu.org/licenses/gpl-3.0.en.html]
+This app is licensed under the GPL-3.0 license. See [COPYING.md](./COPYING.md) for
+the license attached to this repository, or the [GNU website](https://www.gnu.org/licenses/gpl-3.0.en.html)
 for an outline of the restrictions placed by the license.
 
