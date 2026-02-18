@@ -39,7 +39,7 @@ export default function ContextMenu({
   return (
     <>
       <div className="w-full h-full flex flex-col gap-1">
-        <div className="bg-blue-600 text-white p-2 w-full border-b border-neutral-600 flex flex-row justify-between items-center">
+        <div className="bg-blue-600 text-white py-2 px-1 h-12 w-full border-b border-neutral-600 flex flex-row justify-between items-center">
           <p className="font-bold">
             {"Map"}
             <span className="font-normal">

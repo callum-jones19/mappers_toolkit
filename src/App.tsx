@@ -138,15 +138,15 @@ function App() {
     <>
       <div id="app-container" className="w-screen h-screen flex flex-row">
         <div id="tools-section" className="w-60 flex flex-col gap-2 relative">
-					{/* <div className="bg-blue-600 text-white p-2 w-full border-b border-neutral-600 flex flex-row justify-between items-center"> */}
-					{/* 	<p className="font-bold">Tools</p> */}
-					{/* </div> */}
+					<div className="bg-blue-600 text-white py-2 px-1 h-12 w-full border-b border-neutral-600 flex flex-row justify-between items-center">
+						<p className="font-bold">Actions</p>
+					</div>
           <div className="w-full h-full flex flex-col overflow-auto gap-1">
-            <input
-              type="search"
-              className="w-full bg-blue-600 text-white p-2 mb-1 sticky"
-              placeholder="Search actions..."
-            />
+            {/* <input */}
+            {/*   type="search" */}
+            {/*   className="w-full bg-blue-600 text-white p-2 mb-1 sticky" */}
+            {/*   placeholder="Search actions..." */}
+            {/* /> */}
             <MappingButton
               isActive={activeAction === "AddPoint"}
               onClick={() => {
