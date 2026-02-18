@@ -2,6 +2,7 @@ import { check } from "@placemarkio/check-geojson";
 import { type AllGeoJSON } from "@turf/turf";
 import { useState } from "react";
 import type { ActiveAction, Point } from "./App";
+import MappingButton from "./ui/MappingButton";
 
 export interface EraseContext {
   erasablePoints: Point[];
@@ -30,12 +31,12 @@ export default function ContextMenu({
 
   return (
     <>
-      <div className="w-full h-full flex flex-col gap-1">
+      <div className="w-full h-full flex flex-col gap-1 p-2">
         <p>Currently active: {currentActiveAction}</p>
         {currentActiveAction === "Erase"
           && (
             <>
-              <button
+              <MappingButton
                 className="bg-neutral-100 hover:bg-neutral-200 p-2 rounded-md"
                 onClick={() => {
                   const confirmation = confirm(
@@ -47,9 +48,9 @@ export default function ContextMenu({
                 }}
               >
                 Erase All
-              </button>
+              </MappingButton>
               {eraseContext.erasablePoints.map(point => (
-                <button
+                <MappingButton
                   className="bg-neutral-100 hover:bg-neutral-300 p-2"
                   key={point.latitude.toString() + "," + point.longitude.toString()}
                   onClick={() => {
@@ -62,7 +63,7 @@ export default function ContextMenu({
                   }}
                 >
                   {point.longitude}, {point.latitude}
-                </button>
+                </MappingButton>
               ))}
               {eraseContext.erasablePoints.length === 0
                 && <p>No points on the map</p>}
@@ -82,7 +83,7 @@ export default function ContextMenu({
                   setLastGeojsonInvalid(false);
                 }}
               />
-              <button
+              <MappingButton
                 disabled={newGeojson.length === 0}
                 type="button"
                 className="disabled:bg-neutral-400 disabled:text-neutral-600 bg-green-400 hover:bg-green-600 hover:text-white p-3 rounded-md"
@@ -101,7 +102,7 @@ export default function ContextMenu({
                 }}
               >
                 Add GeoJson
-              </button>
+              </MappingButton>
             </div>
           )}
       </div>

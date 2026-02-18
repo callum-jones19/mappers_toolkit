@@ -12,6 +12,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useMemo, useState } from "react";
 import { MapPin } from "react-feather";
 import ContextMenu from "./ContextMenu";
+import MappingButton from "./ui/MappingButton";
 
 export interface Point {
   latitude: number;
@@ -137,82 +138,69 @@ function App() {
     <>
       <div id="app-container" className="w-screen h-screen flex flex-row">
         <div id="tools-section" className="w-60 flex flex-col gap-2 relative">
-          <div className="w-full h-full flex flex-col p-2 gap-2 overflow-auto">
-            <input type="search" className="w-full bg-neutral-300 p-2 rounded-sm sticky" placeholder="Search tool..." />
-            <details open className="w-full">
-              <summary className="font-bold">Draw</summary>
-              <button
-                className={`mt-2 w-full p-1 ${
-                  activeAction === "AddPoint" ? "bg-neutral-400 animate-pulse" : "bg-neutral-100 hover:bg-neutral-200"
-                } rounded-t-sm border-b border-neutral-300`}
-                onClick={() => {
-                  if (activeAction === "AddPoint") {
-                    setActiveAction("Pan");
-                    setGhostPoint(null);
-                  } else {
-                    setActiveAction("AddPoint");
-                  }
-                }}
-              >
-                Add point
-              </button>
-              <button
-                disabled
-                className="disabled:bg-neutral-500 disabled:text-neutral-400 w-full p-1 hover:bg-neutral-200 bg-neutral-100"
-              >
-                Add polygon
-              </button>
-              <button
-                className={`mt-2 w-full p-1 ${
-                  activeAction === "AddLine" ? "bg-neutral-400 animate-pulse" : "bg-neutral-100 hover:bg-neutral-200"
-                } rounded-t-sm border-b border-neutral-300`}
-                onClick={() => {
-                  if (activeAction === "AddLine") {
-                    setActiveAction("Pan");
-                    setDrawingLine(null);
-                    setGhostPoint(null);
-                  } else {
-                    setActiveAction("AddLine");
-                  }
-                }}
-              >
-                Add line
-              </button>
-              <button
-                className={`disabled:bg-neutral-500 disabled:text-neutral-400 w-full p-1 ${
-                  activeAction !== "AddGeojson" ? "hover:bg-neutral-200 bg-neutral-100" : "bg-green-400"
-                }`}
-                onClick={() => {
-                  if (activeAction === "AddGeojson") {
-                    setActiveAction("Pan");
-                  } else {
-                    setActiveAction("AddGeojson");
-                    setDrawingLine(null);
-                    setGhostPoint(null);
-                  }
-                }}
-              >
-                Add GeoJSON
-              </button>
-              <button
-                className={`mt-2 disabled:bg-neutral-500 disabled:text-neutral-400 w-full p-1 ${
-                  activeAction === "Erase"
-                    ? "bg-neutral-400 animate-pulse"
-                    : "bg-neutral-100 hover:bg-neutral-200"
-                } rounded-t-sm`}
-                onClick={() => {
-                  if (activeAction !== "Erase") {
-                    setActiveAction("Erase");
-                    setDrawingLine(null);
-                    setGhostPoint(null);
-                  } else {
-                    setActiveAction("Pan");
-                  }
-                }}
-              >
-                Erase
-              </button>
-            </details>
+          <div className="w-full h-full flex flex-col p-2 overflow-auto">
+            <input type="search" className="w-full bg-neutral-300 p-2 mb-2 sticky" placeholder="Search tool..." />
+            <MappingButton
+              isActive={activeAction === "AddPoint"}
+              onClick={() => {
+                if (activeAction === "AddPoint") {
+                  setActiveAction("Pan");
+                  setGhostPoint(null);
+                } else {
+                  setActiveAction("AddPoint");
+                }
+              }}
+            >
+              Add point
+            </MappingButton>
+            <MappingButton
+              disabled
+              isActive={activeAction === "AddPolygon"}
+            >
+              Add polygon
+            </MappingButton>
+            <MappingButton
+              isActive={activeAction === "AddLine"}
+              onClick={() => {
+                if (activeAction === "AddLine") {
+                  setActiveAction("Pan");
+                  setDrawingLine(null);
+                  setGhostPoint(null);
+                } else {
+                  setActiveAction("AddLine");
+                }
+              }}
+            >
+              Add line
+            </MappingButton>
+            <MappingButton
+              isActive={activeAction === "AddGeojson"}
+              onClick={() => {
+                if (activeAction === "AddGeojson") {
+                  setActiveAction("Pan");
+                } else {
+                  setActiveAction("AddGeojson");
+                  setDrawingLine(null);
+                  setGhostPoint(null);
+                }
+              }}
+            >
+              Add GeoJSON
+            </MappingButton>
+            <MappingButton
+              isActive={activeAction === "Erase"}
+              onClick={() => {
+                if (activeAction !== "Erase") {
+                  setActiveAction("Erase");
+                  setDrawingLine(null);
+                  setGhostPoint(null);
+                } else {
+                  setActiveAction("Pan");
+                }
+              }}
+            >
+              Erase
+            </MappingButton>
           </div>
         </div>
         <div id="map-segment" className="w-full h-full relative">
@@ -318,8 +306,7 @@ function App() {
             ))}
           </Map>
         </div>
-        <div id="context-window" className="w-md h-full flex flex-col p-2 gap-2">
-          <h2 className="text-center font-bold">Context Menu</h2>
+        <div id="context-window" className="w-md h-full">
           <ContextMenu
             currentActiveAction={activeAction}
             eraseContext={{
