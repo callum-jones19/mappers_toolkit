@@ -139,7 +139,11 @@ function App() {
       <div id="app-container" className="w-screen h-screen flex flex-row">
         <div id="tools-section" className="w-60 flex flex-col gap-2 relative">
           <div className="w-full h-full flex flex-col p-2 overflow-auto">
-            <input type="search" className="w-full bg-neutral-300 p-2 mb-2 sticky" placeholder="Search tool..." />
+            <input
+              type="search"
+              className="w-full bg-neutral-300 p-2 mb-2 sticky"
+              placeholder="Search tool..."
+            />
             <MappingButton
               isActive={activeAction === "AddPoint"}
               onClick={() => {
@@ -315,9 +319,9 @@ function App() {
                 setPoints(newPoints);
               },
             }}
-						onChangeActiveAction={newAction => {
-							setActiveAction(newAction);
-						}}
+            onChangeActiveAction={newAction => {
+              setActiveAction(newAction);
+            }}
             newGeojsonContext={{
               onCreateGeojson: newGeojson => {
                 console.log(newGeojson);
