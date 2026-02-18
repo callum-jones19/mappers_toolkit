@@ -61,8 +61,8 @@ export default function ContextMenu({
             onClick={() => {
               onChangeActiveAction("Pan");
             }}
-            className="w-fit hover:bg-blue-600 hover:text-white hover:font-bold"
-						type='button'
+            className="w-fit hover:bg-neutral-400"
+            type="button"
           >
             <X />
           </button>
