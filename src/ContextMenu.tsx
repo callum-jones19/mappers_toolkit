@@ -105,33 +105,28 @@ export default function ContextMenu({
           {currentActiveAction === "AddGeojson"
             && (
               <>
+								<div className="w-full flex flex-row justify-evenly gap-1 bg-neutral-100 rounded-sm p-1">
+									<MappingButton
+										isActive={currentGeojsonMode === 'JSON'}
+										onClick={() => {setCurrentGeojsonMode('JSON')}}
+									>
+										JSON
+									</MappingButton>
+									<MappingButton
+										isActive={currentGeojsonMode === 'IMPORT'}
+										onClick={() => {setCurrentGeojsonMode('IMPORT')}}
+									>
+										Upload
+									</MappingButton>
+								</div>
                 <div className="w-full h-full flex flex-col bg-neutral-100 rounded-sm p-2 gap-2">
-                  <div className="w-full flex flex-row justify-between items-center">
-                    <label htmlFor="geojson-source">GeoJSON Source:</label>
-                    <select
-                      id="geojson-source"
-                      name="geojson-source"
-                      className="bg-neutral-50 py-1 px-2 border border-neutral-300 rounded-sm"
-                      defaultValue="json"
-                      onChange={e => {
-                        if (e.currentTarget.value === "json") {
-                          setCurrentGeojsonMode("JSON");
-                        } else {
-                          setCurrentGeojsonMode("IMPORT");
-                        }
-                      }}
-                    >
-                      <option value="json">JSON</option>
-                      <option value="upload">Upload</option>
-                    </select>
-                  </div>
                   {currentGeojsonMode === "JSON"
                     && (
                       <div className="w-full h-full flex flex-col gap-2">
                         <textarea
                           className={`border ${
-                            lastGeojsonInvalid ? "border-red-300 bg-red-50" : "border-neutral-400"
-                          } h-full w-full resize-none bg-neutral-50`}
+                            lastGeojsonInvalid ? "border-red-300 bg-red-50" : "border-neutral-300"
+                          } h-full w-full resize-none bg-neutral-50 rounded-sm`}
                           value={newGeojson}
                           onChange={e => {
                             setNewGeojson(e.currentTarget.value);
@@ -162,20 +157,14 @@ export default function ContextMenu({
                     )}
                   {currentGeojsonMode === "IMPORT"
                     && (
-                      <div className="flex flex-col w-full justify-between items-center">
-                        <label
-                          htmlFor="geojson-upload"
-                          className="border border-neutral-300"
-                        >
-                          Select Files
-                        </label>
+                      <div className="flex flex-col w-full justify-between items-center gap-1">
                         <input
                           type="file"
                           id="geojson-upload"
                           className="w-full border border-neutral-300 rounded-sm p-1"
                           accept=".json,.geojson"
                         />
-                        <button>Confirm</button>
+                        <button className="bg-white border-neutral-300 rounded-sm p-1">Confirm</button>
                       </div>
                     )}
                 </div>
