@@ -10,7 +10,7 @@ import {
 } from "@vis.gl/react-maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useMemo, useState } from "react";
-import { MapPin } from "react-feather";
+import { ChevronDown, MapPin } from "react-feather";
 import ContextMenu from "./ContextMenu";
 import MappingButton from "./ui/MappingButton";
 
@@ -140,17 +140,20 @@ function App() {
   return (
     <>
       <div id="app-container" className="w-screen h-screen flex flex-row">
-        <div id="tools-section" className="w-60 flex flex-col relative border-r border-neutral-400">
+        <div id="tools-section" className="w-90 flex flex-col relative border-r border-neutral-400">
           <div className="bg-neutral-100 py-2 px-1 h-12 w-full border-b border-neutral-400 flex flex-row justify-between items-center">
             <p className="font-bold">Actions</p>
           </div>
-          <div className="w-full h-full flex flex-col overflow-auto">
+          <div className="w-full h-full flex flex-col gap-2 overflow-auto p-2">
             <input
               type="search"
-              className="w-full border-b border-neutral-400 p-2 mb-2 sticky"
+              className="w-full border border-neutral-200 p-2 sticky rounded-sm"
               placeholder="Search actions..."
             />
-            <div>
+            <div className="bg-neutral-100 p-2 rounded-sm flex flex-col gap-1">
+              <div className="border-b border-neutral-300 header-row flex flex-row justify-between items-center py-1">
+                <h3 className="font-semibold">Add</h3>
+              </div>
               <MappingButton
                 isActive={activeAction === "AddPoint"}
                 onClick={() => {
@@ -163,12 +166,6 @@ function App() {
                 }}
               >
                 Add point
-              </MappingButton>
-              <MappingButton
-                disabled
-                isActive={activeAction === "AddPolygon"}
-              >
-                Add polygon
               </MappingButton>
               <MappingButton
                 isActive={activeAction === "AddLine"}
@@ -199,20 +196,25 @@ function App() {
                 Add GeoJSON
               </MappingButton>
             </div>
-            <MappingButton
-              isActive={activeAction === "Erase"}
-              onClick={() => {
-                if (activeAction !== "Erase") {
-                  setActiveAction("Erase");
-                  setDrawingLine(null);
-                  setGhostPoint(null);
-                } else {
-                  setActiveAction("Pan");
-                }
-              }}
-            >
-              Delete
-            </MappingButton>
+            <div className="bg-neutral-100 p-2 rounded-sm">
+              <div className="border-b border-neutral-300 header-row flex flex-row justify-between items-center py-1">
+                <h3 className="font-semibold">Delete</h3>
+              </div>
+              <MappingButton
+                isActive={activeAction === "Erase"}
+                onClick={() => {
+                  if (activeAction !== "Erase") {
+                    setActiveAction("Erase");
+                    setDrawingLine(null);
+                    setGhostPoint(null);
+                  } else {
+                    setActiveAction("Pan");
+                  }
+                }}
+              >
+                Delete
+              </MappingButton>
+            </div>
           </div>
         </div>
         <div id="map-segment" className="w-full h-full relative">

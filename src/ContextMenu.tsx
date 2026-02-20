@@ -1,7 +1,7 @@
 import { check } from "@placemarkio/check-geojson";
 import { type AllGeoJSON } from "@turf/turf";
 import { useState } from "react";
-import { X } from "react-feather";
+import { ChevronDown, X } from "react-feather";
 import type { ActiveAction, Basemap, Point } from "./App";
 import MappingButton from "./ui/MappingButton";
 
@@ -70,14 +70,18 @@ export default function ContextMenu({
             <X />
           </button>
         </div>
-        <div className="w-full basis-full flex flex-col gap-2">
+        <div className="w-full basis-full flex flex-col gap-2 p-2">
           {currentActiveAction === "Pan"
             && (
-              <div className="w-full h-full flex flex-col p-2">
-                <div className="flex flex-row justify-between">
+              <div className="w-full flex flex-col p-2 gap-2 bg-neutral-100 rounded-sm">
+                <div className="border-b border-neutral-300 header-row flex flex-row justify-between items-center py-1">
+                  <h3>Map Settings</h3>
+                  <ChevronDown />
+                </div>
+                <div className="flex flex-row justify-between items-center">
                   <label htmlFor="basemaps">Basemap</label>
                   <select
-                    defaultValue={'colorful'}
+                    defaultValue={"colorful"}
                     onChange={e => {
                       // FIXME
                       console.log(e.currentTarget.value);
@@ -85,6 +89,7 @@ export default function ContextMenu({
                     }}
                     name="basemaps"
                     id="basemaps"
+                    className="p-1 rounded-sm border-neutral-400 bg-neutral-200 border"
                   >
                     <option value="colorful">Colorful</option>
                     <option value="neutrino">Neutrino</option>
@@ -100,97 +105,79 @@ export default function ContextMenu({
           {currentActiveAction === "AddGeojson"
             && (
               <>
-                <div className="h-full w-full flex flex-col gap-2 p-2">
-                  <div className="w-full h-full flex flex-col gap-2 bg-neutral-50 border border-neutral-200 p-2 ">
-                    <div className="w-full flex flex-row justify-between items-center">
-                      {/* <MappingButton */}
-                      {/*   isActive={currentGeojsonMode === "JSON"} */}
-                      {/*   onClick={() => { */}
-                      {/*     setCurrentGeojsonMode("JSON"); */}
-                      {/*   }} */}
-                      {/* > */}
-                      {/*   JSON */}
-                      {/* </MappingButton> */}
-                      {/* <MappingButton */}
-                      {/*   isActive={currentGeojsonMode === "IMPORT"} */}
-                      {/*   onClick={() => { */}
-                      {/*     setCurrentGeojsonMode("IMPORT"); */}
-                      {/*   }} */}
-                      {/* > */}
-                      {/*   Upload */}
-                      {/* </MappingButton> */}
-                      <label htmlFor="geojson-source">GeoJSON Source:</label>
-                      <select
-                        id="geojson-source"
-                        name="geojson-source"
-                        className="bg-neutral-50 py-1 px-2 border border-neutral-300 rounded-sm"
-                        defaultValue="json"
-                        onChange={e => {
-                          if (e.currentTarget.value === "json") {
-                            setCurrentGeojsonMode("JSON");
-                          } else {
-                            setCurrentGeojsonMode("IMPORT");
-                          }
-                        }}
-                      >
-                        <option value="json">JSON</option>
-                        <option value="upload">Upload</option>
-                      </select>
-                    </div>
-                    {currentGeojsonMode === "JSON"
-                      && (
-                        <div className="w-full h-full flex flex-col gap-2">
-                          <textarea
-                            className={`border ${
-                              lastGeojsonInvalid ? "border-red-300 bg-red-50" : "border-neutral-400"
-                            } h-full w-full resize-none`}
-                            value={newGeojson}
-                            onChange={e => {
-                              setNewGeojson(e.currentTarget.value);
-                              setLastGeojsonInvalid(false);
-                            }}
-                          />
-                          <MappingButton
-                            disabled={newGeojson.length === 0}
-                            type="button"
-                            className="disabled:bg-neutral-300 disabled:text-neutral-500 border border-neutral-400 hover:bg-blue-600 hover:text-white font-bold p-2"
-                            onClick={() => {
-                              try {
-                                console.log(newGeojson);
-                                const parsedGeojson = check(newGeojson);
-                                console.log(parsedGeojson);
-                                newGeojsonContext.onCreateGeojson(parsedGeojson);
-                                setLastGeojsonInvalid(false);
-                                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                              } catch (e) {
-                                // FIXME
-                                setLastGeojsonInvalid(true);
-                              }
-                            }}
-                          >
-                            Add GeoJson
-                          </MappingButton>
-                        </div>
-                      )}
-                    {currentGeojsonMode === "IMPORT"
-                      && (
-                        <div className="flex flex-col w-full justify-between items-center">
-                          <label
-                            htmlFor="geojson-upload"
-                            className="border border-neutral-300"
-                          >
-                            Select Files
-                          </label>
-                          <input
-                            type="file"
-                            id="geojson-upload"
-                            className="w-full border border-neutral-300 rounded-sm p-1"
-                            accept=".json,.geojson"
-                          />
-                          <button>Confirm</button>
-                        </div>
-                      )}
+                <div className="w-full h-full flex flex-col bg-neutral-100 rounded-sm p-2 gap-2">
+                  <div className="w-full flex flex-row justify-between items-center">
+                    <label htmlFor="geojson-source">GeoJSON Source:</label>
+                    <select
+                      id="geojson-source"
+                      name="geojson-source"
+                      className="bg-neutral-50 py-1 px-2 border border-neutral-300 rounded-sm"
+                      defaultValue="json"
+                      onChange={e => {
+                        if (e.currentTarget.value === "json") {
+                          setCurrentGeojsonMode("JSON");
+                        } else {
+                          setCurrentGeojsonMode("IMPORT");
+                        }
+                      }}
+                    >
+                      <option value="json">JSON</option>
+                      <option value="upload">Upload</option>
+                    </select>
                   </div>
+                  {currentGeojsonMode === "JSON"
+                    && (
+                      <div className="w-full h-full flex flex-col gap-2">
+                        <textarea
+                          className={`border ${
+                            lastGeojsonInvalid ? "border-red-300 bg-red-50" : "border-neutral-400"
+                          } h-full w-full resize-none bg-neutral-50`}
+                          value={newGeojson}
+                          onChange={e => {
+                            setNewGeojson(e.currentTarget.value);
+                            setLastGeojsonInvalid(false);
+                          }}
+                        />
+                        <MappingButton
+                          disabled={newGeojson.length === 0}
+                          type="button"
+                          className="p-1 hover:bg-blue-500 hover:text-white font-bold rounded-sm bg-neutral-50 border border-neutral-500"
+                          onClick={() => {
+                            try {
+                              console.log(newGeojson);
+                              const parsedGeojson = check(newGeojson);
+                              console.log(parsedGeojson);
+                              newGeojsonContext.onCreateGeojson(parsedGeojson);
+                              setLastGeojsonInvalid(false);
+                              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                            } catch (e) {
+                              // FIXME
+                              setLastGeojsonInvalid(true);
+                            }
+                          }}
+                        >
+                          Add GeoJson
+                        </MappingButton>
+                      </div>
+                    )}
+                  {currentGeojsonMode === "IMPORT"
+                    && (
+                      <div className="flex flex-col w-full justify-between items-center">
+                        <label
+                          htmlFor="geojson-upload"
+                          className="border border-neutral-300"
+                        >
+                          Select Files
+                        </label>
+                        <input
+                          type="file"
+                          id="geojson-upload"
+                          className="w-full border border-neutral-300 rounded-sm p-1"
+                          accept=".json,.geojson"
+                        />
+                        <button>Confirm</button>
+                      </div>
+                    )}
                 </div>
               </>
             )}
