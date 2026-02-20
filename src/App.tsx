@@ -10,7 +10,7 @@ import {
 } from "@vis.gl/react-maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useMemo, useState } from "react";
-import { ChevronDown, MapPin } from "react-feather";
+import { HelpCircle, MapPin } from "react-feather";
 import ContextMenu from "./ContextMenu";
 import MappingButton from "./ui/MappingButton";
 
@@ -23,7 +23,7 @@ export interface Line {
   points: Point[];
 }
 
-export type ActiveAction = "Pan" | "AddPoint" | "AddLine" | "AddPolygon" | "AddGeojson" | "Erase";
+export type ActiveAction = "Pan" | "AddPoint" | "AddLine" | "AddPolygon" | "AddGeojson" | "PreviewGeojson" | "AddWKT" | "PreviewWKT";
 export type Basemap = "colorful" | "neutrino";
 
 function App() {
@@ -153,6 +153,9 @@ function App() {
             <div className="bg-neutral-100 p-2 rounded-sm flex flex-col gap-1">
               <div className="border-b border-neutral-300 header-row flex flex-row justify-between items-center py-1">
                 <h3 className="font-semibold">Add</h3>
+								<HelpCircle
+									className="font-normal h-4 text-neutral-500"
+								/>
               </div>
               <MappingButton
                 isActive={activeAction === "AddPoint"}
@@ -195,16 +198,33 @@ function App() {
               >
                 Add GeoJSON
               </MappingButton>
+              <MappingButton
+                isActive={activeAction === "AddWKT"}
+                onClick={() => {
+                  if (activeAction === "AddWKT") {
+                    setActiveAction("Pan");
+                  } else {
+                    setActiveAction("AddWKT");
+                    setDrawingLine(null);
+                    setGhostPoint(null);
+                  }
+                }}
+              >
+                Add Wellknown Text (WKT)
+              </MappingButton>
             </div>
             <div className="bg-neutral-100 p-2 rounded-sm">
               <div className="border-b border-neutral-300 header-row flex flex-row justify-between items-center py-1">
-                <h3 className="font-semibold">Delete</h3>
+                <h3 className="font-semibold">Preview</h3>
+								<HelpCircle
+									className="font-normal h-4 text-neutral-500"
+								/>
               </div>
               <MappingButton
-                isActive={activeAction === "Erase"}
+                isActive={activeAction === "PreviewGeojson"}
                 onClick={() => {
-                  if (activeAction !== "Erase") {
-                    setActiveAction("Erase");
+                  if (activeAction !== "PreviewGeojson") {
+                    setActiveAction("PreviewGeojson");
                     setDrawingLine(null);
                     setGhostPoint(null);
                   } else {
@@ -212,7 +232,21 @@ function App() {
                   }
                 }}
               >
-                Delete
+                Preview GeoJSON
+              </MappingButton>
+              <MappingButton
+                isActive={activeAction === "PreviewWKT"}
+                onClick={() => {
+                  if (activeAction !== "PreviewWKT") {
+                    setActiveAction("PreviewWKT");
+                    setDrawingLine(null);
+                    setGhostPoint(null);
+                  } else {
+                    setActiveAction("Pan");
+                  }
+                }}
+              >
+              	Preview WKT (Wellknown Text)
               </MappingButton>
             </div>
           </div>
@@ -261,8 +295,6 @@ function App() {
                 setPoints([...points, newPoint]);
                 setActiveAction("Pan");
                 setGhostPoint(null);
-              } else if (activeAction === "Erase") {
-                console.log(e.type);
               } else if (activeAction === "AddLine") {
                 const newLine: Line = { points: [{ latitude: e.lngLat.lat, longitude: e.lngLat.lng }] };
                 if (drawingLine === null) {
@@ -320,7 +352,8 @@ function App() {
             ))}
           </Map>
         </div>
-        <div id="context-window" className="w-md h-full border-l border-neutral-400">
+        <div id="context-window" className="w-md h-full border-l border-neutral-400 flex flex-col">
+					{/* <ObjectMenu /> */}
           <ContextMenu
             currentActiveAction={activeAction}
             eraseContext={{

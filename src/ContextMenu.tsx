@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChevronDown, X } from "react-feather";
 import type { ActiveAction, Basemap, Point } from "./App";
 import MappingButton from "./ui/MappingButton";
+import ObjectMenu from "./ObjectMenu";
 
 export interface EraseContext {
   erasablePoints: Point[];
@@ -73,34 +74,33 @@ export default function ContextMenu({
         <div className="w-full basis-full flex flex-col gap-2 p-2">
           {currentActiveAction === "Pan"
             && (
-              <div className="w-full flex flex-col p-2 gap-2 bg-neutral-100 rounded-sm">
-                <div className="border-b border-neutral-300 header-row flex flex-row justify-between items-center py-1">
-                  <h3>Map Settings</h3>
-                  <ChevronDown />
-                </div>
-                <div className="flex flex-row justify-between items-center">
-                  <label htmlFor="basemaps">Basemap</label>
-                  <select
-                    defaultValue={"colorful"}
-                    onChange={e => {
-                      // FIXME
-                      console.log(e.currentTarget.value);
-                      onChangeBasemap(e.currentTarget.value);
-                    }}
-                    name="basemaps"
-                    id="basemaps"
-                    className="p-1 rounded-sm border-neutral-400 bg-neutral-200 border"
-                  >
-                    <option value="colorful">Colorful</option>
-                    <option value="neutrino">Neutrino</option>
-                  </select>
-                </div>
-              </div>
-            )}
-          {currentActiveAction === "Erase"
-            && (
-              <>
-              </>
+							<div className="w-full h-full flex flex-col gap-2">
+								<ObjectMenu
+									objects={[]}
+									onDeleteObject={() => {}}
+									onHideObject={() => {}}
+									onRenameObject={() => {}}
+								/>
+								<div className="w-full flex flex-col p-2 gap-2 bg-neutral-100 rounded-sm">
+									<div className="flex flex-row justify-between items-center">
+										<label htmlFor="basemaps">Basemap</label>
+										<select
+											defaultValue={"colorful"}
+											onChange={e => {
+												// FIXME
+												console.log(e.currentTarget.value);
+												onChangeBasemap(e.currentTarget.value);
+											}}
+											name="basemaps"
+											id="basemaps"
+											className="p-1 rounded-sm border-neutral-400 bg-neutral-200 border"
+										>
+											<option value="colorful">Colorful</option>
+											<option value="neutrino">Neutrino</option>
+										</select>
+									</div>
+							</div>
+							</div>
             )}
           {currentActiveAction === "AddGeojson"
             && (
