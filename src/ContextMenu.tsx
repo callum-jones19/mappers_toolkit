@@ -77,7 +77,7 @@ export default function ContextMenu({
                 <div className="flex flex-row justify-between">
                   <label htmlFor="basemaps">Basemap</label>
                   <select
-                    defaultValue={basemap}
+                    defaultValue={'colorful'}
                     onChange={e => {
                       // FIXME
                       console.log(e.currentTarget.value);

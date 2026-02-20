@@ -24,7 +24,7 @@ export interface Line {
 }
 
 export type ActiveAction = "Pan" | "AddPoint" | "AddLine" | "AddPolygon" | "AddGeojson" | "Erase";
-export type Basemap = "Colorful" | "Neutrino";
+export type Basemap = "colorful" | "neutrino";
 
 function App() {
   // Map state
@@ -32,7 +32,7 @@ function App() {
   const [lng, setLng] = useState<number>(151);
   const [zoom, setZoom] = useState<number>(11);
 
-  const [basemap, setBasemap] = useState<Basemap>("Colorful");
+  const [basemap, setBasemap] = useState<Basemap>("colorful");
 
   // App state
   const [activeAction, setActiveAction] = useState<ActiveAction>("Pan");
