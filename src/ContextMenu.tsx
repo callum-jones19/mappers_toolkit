@@ -20,8 +20,8 @@ export interface ContxtMenuProps {
   onChangeActiveAction: (newActive: ActiveAction) => void;
   eraseContext: EraseContext;
   newGeojsonContext: NewGeoJsonContext;
-	basemap: Basemap;
-	onChangeBasemap: (newBasemap: Basemap) => void;
+  basemap: Basemap;
+  onChangeBasemap: (newBasemap: Basemap) => void;
 }
 
 type AddGeojsonOptions = "JSON" | "IMPORT";
@@ -31,8 +31,8 @@ export default function ContextMenu({
   onChangeActiveAction,
   // eraseContext,
   newGeojsonContext,
-	basemap,
-	onChangeBasemap
+  basemap,
+  onChangeBasemap,
 }: ContxtMenuProps) {
   // If AddGeojson context, validate that the entered geojson is valid.
   const [newGeojson, setNewGeojson] = useState<string>("");
@@ -74,22 +74,22 @@ export default function ContextMenu({
           {currentActiveAction === "Pan"
             && (
               <div className="w-full h-full flex flex-col p-2">
-								<div className="flex flex-row justify-between">
-									<label htmlFor='basemaps'>Basemap</label>
-									<select
-										defaultValue={basemap}
-										onChange={e => {
-											// FIXME
-											console.log(e.currentTarget.value);
-											onChangeBasemap(e.currentTarget.value);
-										}}
-										name='basemaps'
-										id='basemaps'
-									>
-										<option value='colorful'>Colorful</option>
-										<option value='neutrino'>Neutrino</option>
-									</select>
-								</div>
+                <div className="flex flex-row justify-between">
+                  <label htmlFor="basemaps">Basemap</label>
+                  <select
+                    defaultValue={basemap}
+                    onChange={e => {
+                      // FIXME
+                      console.log(e.currentTarget.value);
+                      onChangeBasemap(e.currentTarget.value);
+                    }}
+                    name="basemaps"
+                    id="basemaps"
+                  >
+                    <option value="colorful">Colorful</option>
+                    <option value="neutrino">Neutrino</option>
+                  </select>
+                </div>
               </div>
             )}
           {currentActiveAction === "Erase"
@@ -119,23 +119,23 @@ export default function ContextMenu({
                       {/* > */}
                       {/*   Upload */}
                       {/* </MappingButton> */}
-											<label htmlFor="geojson-source">GeoJSON Source:</label>
-											<select
-												id='geojson-source'
-												name="geojson-source"
-												className="bg-neutral-50 py-1 px-2 border border-neutral-300 rounded-sm"
-												defaultValue='json'
-												onChange={e => {
-													if (e.currentTarget.value === "json") {
-														setCurrentGeojsonMode('JSON');
-													} else {
-														setCurrentGeojsonMode('IMPORT');
-													}
-												}}
-											>
-												<option value='json'>JSON</option>
-												<option value='upload'>Upload</option>
-											</select>
+                      <label htmlFor="geojson-source">GeoJSON Source:</label>
+                      <select
+                        id="geojson-source"
+                        name="geojson-source"
+                        className="bg-neutral-50 py-1 px-2 border border-neutral-300 rounded-sm"
+                        defaultValue="json"
+                        onChange={e => {
+                          if (e.currentTarget.value === "json") {
+                            setCurrentGeojsonMode("JSON");
+                          } else {
+                            setCurrentGeojsonMode("IMPORT");
+                          }
+                        }}
+                      >
+                        <option value="json">JSON</option>
+                        <option value="upload">Upload</option>
+                      </select>
                     </div>
                     {currentGeojsonMode === "JSON"
                       && (
@@ -175,19 +175,19 @@ export default function ContextMenu({
                     {currentGeojsonMode === "IMPORT"
                       && (
                         <div className="flex flex-col w-full justify-between items-center">
-													<label
-														htmlFor='geojson-upload'
-														className="border border-neutral-300"
-													>
-														Select Files
-													</label>
+                          <label
+                            htmlFor="geojson-upload"
+                            className="border border-neutral-300"
+                          >
+                            Select Files
+                          </label>
                           <input
-														type="file"
-														id='geojson-upload'
-														className="w-full border border-neutral-300 rounded-sm p-1"
-														accept=".json,.geojson"
-													/>
-													<button>Confirm</button>
+                            type="file"
+                            id="geojson-upload"
+                            className="w-full border border-neutral-300 rounded-sm p-1"
+                            accept=".json,.geojson"
+                          />
+                          <button>Confirm</button>
                         </div>
                       )}
                   </div>
