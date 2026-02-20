@@ -24,12 +24,15 @@ export interface Line {
 }
 
 export type ActiveAction = "Pan" | "AddPoint" | "AddLine" | "AddPolygon" | "AddGeojson" | "Erase";
+export type Basemap = "Colorful" | "Neutrino";
 
 function App() {
   // Map state
   const [lat, setLat] = useState<number>(-33);
   const [lng, setLng] = useState<number>(151);
   const [zoom, setZoom] = useState<number>(11);
+
+	const [basemap, setBasemap] = useState<Basemap>('Colorful');
 
   // App state
   const [activeAction, setActiveAction] = useState<ActiveAction>("Pan");
@@ -137,16 +140,16 @@ function App() {
   return (
     <>
       <div id="app-container" className="w-screen h-screen flex flex-row">
-        <div id="tools-section" className="w-60 flex flex-col gap-2 relative border-r border-neutral-400">
-					<div className="py-2 px-1 h-12 w-full border-b border-neutral-400 flex flex-row justify-between items-center">
+        <div id="tools-section" className="w-60 flex flex-col relative border-r border-neutral-400">
+					<div className="bg-neutral-100 py-2 px-1 h-12 w-full border-b border-neutral-400 flex flex-row justify-between items-center">
 						<p className="font-bold">Actions</p>
 					</div>
-          <div className="w-full h-full flex flex-col overflow-auto gap-1">
-            {/* <input */}
-            {/*   type="search" */}
-            {/*   className="w-full bg-blue-600 text-white p-2 mb-1 sticky" */}
-            {/*   placeholder="Search actions..." */}
-            {/* /> */}
+          <div className="w-full h-full flex flex-col overflow-auto">
+            <input
+              type="search"
+              className="w-full border-b border-neutral-400 p-2 sticky"
+              placeholder="Search actions..."
+            />
             <MappingButton
               isActive={activeAction === "AddPoint"}
               onClick={() => {
@@ -206,7 +209,7 @@ function App() {
                 }
               }}
             >
-              Erase
+              Delete
             </MappingButton>
           </div>
         </div>
@@ -235,7 +238,7 @@ function App() {
               setLat(e.viewState.latitude);
               setZoom(e.viewState.zoom);
             }}
-            mapStyle="https://tiles.versatiles.org/assets/styles/colorful/style.json"
+            mapStyle={`https://tiles.versatiles.org/assets/styles/${basemap}/style.json`}
             onMouseMove={e => {
               if (activeAction === "AddLine") {
                 console.log(drawingLine);
@@ -331,6 +334,10 @@ function App() {
                 setGeojsons([...geojsons, newGeojson]);
               },
             }}
+						basemap={basemap}
+						onChangeBasemap={e => {
+							setBasemap(e);
+						}}
           />
         </div>
       </div>
