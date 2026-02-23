@@ -39,6 +39,7 @@ function App() {
   const [points, setPoints] = useState<Point[]>([]);
   const [lines, setLines] = useState<Line[]>([]);
   const [geojsons, setGeojsons] = useState<AllGeoJSON[]>([]);
+	const [previewGeojson, setPreviewGeojson] = useState<AllGeoJSON | null>(null);
 
   // Temporary states
   // Track a new line as it is being drawn.
@@ -213,42 +214,6 @@ function App() {
                 Add Wellknown Text (WKT)
               </MappingButton>
             </div>
-            <div className="bg-neutral-100 p-2 rounded-sm">
-              <div className="border-b border-neutral-300 header-row flex flex-row justify-between items-center py-1">
-                <h3 className="font-semibold">Preview</h3>
-								<HelpCircle
-									className="font-normal h-4 text-neutral-500"
-								/>
-              </div>
-              <MappingButton
-                isActive={activeAction === "PreviewGeojson"}
-                onClick={() => {
-                  if (activeAction !== "PreviewGeojson") {
-                    setActiveAction("PreviewGeojson");
-                    setDrawingLine(null);
-                    setGhostPoint(null);
-                  } else {
-                    setActiveAction("Pan");
-                  }
-                }}
-              >
-                Preview GeoJSON
-              </MappingButton>
-              <MappingButton
-                isActive={activeAction === "PreviewWKT"}
-                onClick={() => {
-                  if (activeAction !== "PreviewWKT") {
-                    setActiveAction("PreviewWKT");
-                    setDrawingLine(null);
-                    setGhostPoint(null);
-                  } else {
-                    setActiveAction("Pan");
-                  }
-                }}
-              >
-              	Preview WKT (Wellknown Text)
-              </MappingButton>
-            </div>
           </div>
         </div>
         <div id="map-segment" className="w-full h-full relative">
@@ -350,6 +315,13 @@ function App() {
                 <Layer {...geojsonsSymbolLayer} />
               </Source>
             ))}
+						{previewGeojson !== null &&
+							<Source key={JSON.stringify(previewGeojson)} id='preview-geojson' type='geojson' data={previewGeojson}>
+                <Layer {...geojsonsFillLayer} />
+                <Layer {...geojsonsLineLayer} />
+                <Layer {...geojsonsSymbolLayer} />
+							</Source>
+						}
           </Map>
         </div>
         <div id="context-window" className="w-md h-full border-l border-neutral-400 flex flex-col">
@@ -370,6 +342,10 @@ function App() {
                 console.log(newGeojson);
                 setGeojsons([...geojsons, newGeojson]);
               },
+							onLiveUpdateGeojson: newGeojson => {
+								setPreviewGeojson(newGeojson);
+								console.log(newGeojson);
+							}
             }}
             basemap={basemap}
             onChangeBasemap={e => {

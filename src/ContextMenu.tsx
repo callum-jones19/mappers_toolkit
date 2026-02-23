@@ -1,7 +1,7 @@
 import { check } from "@placemarkio/check-geojson";
 import { type AllGeoJSON } from "@turf/turf";
 import { useState } from "react";
-import { ChevronDown, X } from "react-feather";
+import { X } from "react-feather";
 import type { ActiveAction, Basemap, Point } from "./App";
 import MappingButton from "./ui/MappingButton";
 import ObjectMenu from "./ObjectMenu";
@@ -14,6 +14,7 @@ export interface EraseContext {
 
 export interface NewGeoJsonContext {
   onCreateGeojson: (newGeojson: AllGeoJSON) => void;
+	onLiveUpdateGeojson: (newGeojson: AllGeoJSON | null) => void;
 }
 
 export interface ContxtMenuProps {
@@ -38,6 +39,7 @@ export default function ContextMenu({
   // If AddGeojson context, validate that the entered geojson is valid.
   const [newGeojson, setNewGeojson] = useState<string>("");
   const [lastGeojsonInvalid, setLastGeojsonInvalid] = useState<boolean>(false);
+	const [previewGeojson, setPreviewGeojson] = useState<boolean>(false);
 
   const [currentGeojsonMode, setCurrentGeojsonMode] = useState<AddGeojsonOptions>("JSON");
   return (
@@ -85,7 +87,7 @@ export default function ContextMenu({
 									<div className="flex flex-row justify-between items-center">
 										<label htmlFor="basemaps">Basemap</label>
 										<select
-											defaultValue={"colorful"}
+											defaultValue={basemap}
 											onChange={e => {
 												// FIXME
 												console.log(e.currentTarget.value);
@@ -131,8 +133,34 @@ export default function ContextMenu({
                           onChange={e => {
                             setNewGeojson(e.currentTarget.value);
                             setLastGeojsonInvalid(false);
+
+														if (previewGeojson) {
+															try {
+																const currGeojson = check(e.currentTarget.value);
+																newGeojsonContext.onLiveUpdateGeojson(currGeojson);
+																setLastGeojsonInvalid(false);
+															} catch (e) {
+																// geojson is invalid;
+																console.error(e);
+																setLastGeojsonInvalid(true);
+																newGeojsonContext.onLiveUpdateGeojson(null);
+															}
+														}
+
                           }}
                         />
+												<div className="w-full flex flex-row justify-between">
+													<label htmlFor="live-preview" className="hover:text-blue-500">Live preview</label>
+													<input
+														type='checkbox'
+														id='live-preview'
+														className="hover:text-blue-500"
+														checked={previewGeojson}
+														onChange={e => {
+															setPreviewGeojson(e.currentTarget.checked);
+														}}
+													/>
+												</div>
                         <MappingButton
                           disabled={newGeojson.length === 0}
                           type="button"
