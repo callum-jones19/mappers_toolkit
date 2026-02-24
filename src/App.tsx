@@ -325,7 +325,6 @@ function App() {
           </Map>
         </div>
         <div id="context-window" className="w-md h-full border-l border-neutral-400 flex flex-col">
-					{/* <ObjectMenu /> */}
           <ContextMenu
             currentActiveAction={activeAction}
             eraseContext={{

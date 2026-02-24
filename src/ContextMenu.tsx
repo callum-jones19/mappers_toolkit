@@ -77,12 +77,6 @@ export default function ContextMenu({
           {currentActiveAction === "Pan"
             && (
 							<div className="w-full h-full flex flex-col gap-2">
-								<ObjectMenu
-									objects={[]}
-									onDeleteObject={() => {}}
-									onHideObject={() => {}}
-									onRenameObject={() => {}}
-								/>
 								<div className="w-full flex flex-col p-2 gap-2 bg-neutral-100 rounded-sm">
 									<div className="flex flex-row justify-between items-center">
 										<label htmlFor="basemaps">Basemap</label>
@@ -158,6 +152,9 @@ export default function ContextMenu({
 														checked={previewGeojson}
 														onChange={e => {
 															setPreviewGeojson(e.currentTarget.checked);
+															if (!e.currentTarget.checked) {
+																newGeojsonContext.onLiveUpdateGeojson(null);
+															}
 														}}
 													/>
 												</div>
