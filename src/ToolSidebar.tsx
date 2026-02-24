@@ -38,6 +38,7 @@ export default function ToolSidebar({
                 Add point
               </MappingButton>
               <MappingButton
+								disabled
                 isActive={activeAction === "AddLine"}
                 onClick={() => {
                   if (activeAction === "AddLine") {

@@ -1,4 +1,4 @@
-import { type AllGeoJSON, featureCollection, lineString } from "@turf/turf";
+import { type AllGeoJSON } from "@turf/turf";
 import {
   Layer,
   Map,
@@ -6,20 +6,26 @@ import {
   Source,
 } from "@vis.gl/react-maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useMemo, useState } from "react";
+import { useRef, useState } from "react";
 import { MapPin, MousePointer, Move } from "react-feather";
 import ContextMenu from "./ContextMenu";
 import MappingButton from "./ui/MappingButton";
-import { geojsonsFillLayer, geojsonsLineLayer, geojsonsSymbolLayer, lineLayer } from "./LayerDefinitions";
+import { geojsonsFillLayer, geojsonsLineLayer, geojsonsSymbolLayer } from "./LayerDefinitions";
 import ToolSidebar from "./ToolSidebar";
 
-export interface Point {
+export interface Coordinate {
   latitude: number;
   longitude: number;
 }
 
+export interface Point {
+	position: Coordinate;
+	id: string;
+}
+
 export interface Line {
-  points: Point[];
+  points: Coordinate[];
+	id: string;
 }
 
 export type ActiveAction = "Pan" | "AddPoint" | "AddLine" | "AddPolygon" | "AddGeojson" | "PreviewGeojson" | "AddWKT" | "PreviewWKT";
@@ -36,26 +42,37 @@ function App() {
   // App state
   const [activeAction, setActiveAction] = useState<ActiveAction>("Pan");
   const [points, setPoints] = useState<Point[]>([]);
-  const [lines, setLines] = useState<Line[]>([]);
+  // const [lines, setLines] = useState<Line[]>([]);
   const [geojsons, setGeojsons] = useState<AllGeoJSON[]>([]);
 	const [previewGeojson, setPreviewGeojson] = useState<AllGeoJSON | null>(null);
 
+	const pointIdCounter = useRef<number>(0);
 
+	function createNewPoint(position: Coordinate) {
+		const newPointId = pointIdCounter.current;
+		pointIdCounter.current = pointIdCounter.current + 1;
+		const newPoint: Point = {
+			id: newPointId.toString(),
+			position,
+		};
 
-  const lineGeoJson = useMemo(() => {
-    if (lines.length === 0) {
-      return null;
-    } else {
-      const allLinesAsGeoJson = lines.map(targetLine => {
-        const lineToPositionArr = targetLine.points.map(p => [p.longitude, p.latitude]);
-        const lineStr = lineString(lineToPositionArr, { name: "test" });
-        return lineStr;
-      });
+		return newPoint;
+	}
 
-      const consolidatedGeoJsons = featureCollection(allLinesAsGeoJson);
-      return consolidatedGeoJsons;
-    }
-  }, [lines]);
+  // const lineGeoJson = useMemo(() => {
+  //   if (lines.length === 0) {
+  //     return null;
+  //   } else {
+  //     const allLinesAsGeoJson = lines.map(targetLine => {
+  //       const lineToPositionArr = targetLine.points.map(p => [p.longitude, p.latitude]);
+  //       const lineStr = lineString(lineToPositionArr, { name: "test" });
+  //       return lineStr;
+  //     });
+  //
+  //     const consolidatedGeoJsons = featureCollection(allLinesAsGeoJson);
+  //     return consolidatedGeoJsons;
+  //   }
+  // }, [lines]);
 
   return (
     <>
@@ -107,23 +124,23 @@ function App() {
             mapStyle={`https://tiles.versatiles.org/assets/styles/${basemap}/style.json`}
             onClick={e => {
               if (activeAction === "AddPoint") {
-                const newPoint: Point = { latitude: e.lngLat.lat, longitude: e.lngLat.lng };
-                setPoints([...points, newPoint]);
+								const newP = createNewPoint({ latitude: e.lngLat.lat, longitude: e.lngLat.lng });
+								setPoints([...points, newP]);
                 setActiveAction("Pan");
               }
             }}
           >
             {points.map(point => (
-              <Marker key={point.latitude + point.longitude} longitude={point.longitude} latitude={point.latitude}>
+              <Marker key={point.id} longitude={point.position.longitude} latitude={point.position.latitude}>
                 <MapPin className="text-white fill-neutral-500" />
               </Marker>
             ))}
-            {lineGeoJson
-              && (
-                <Source id="linedata" type="geojson" data={lineGeoJson}>
-                  <Layer {...lineLayer} />
-                </Source>
-              )}
+            {/* {lineGeoJson */}
+            {/*   && ( */}
+            {/*     <Source id="linedata" type="geojson" data={lineGeoJson}> */}
+            {/*       <Layer {...lineLayer} /> */}
+            {/*     </Source> */}
+            {/*   )} */}
             {geojsons.map(currGeojson => (
               <Source key={JSON.stringify(currGeojson)} id="geojsons" type="geojson" data={currGeojson}>
                 <Layer {...geojsonsFillLayer} />
@@ -143,12 +160,6 @@ function App() {
         <div id="context-window" className="w-md h-full border-l border-neutral-400 flex flex-col">
           <ContextMenu
             currentActiveAction={activeAction}
-            eraseContext={{
-              erasablePoints: points,
-              onErasePoint: newPoints => {
-                setPoints(newPoints);
-              },
-            }}
             onChangeActiveAction={newAction => {
               setActiveAction(newAction);
             }}

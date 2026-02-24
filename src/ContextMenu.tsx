@@ -2,15 +2,8 @@ import { check } from "@placemarkio/check-geojson";
 import { type AllGeoJSON } from "@turf/turf";
 import { useState } from "react";
 import { X } from "react-feather";
-import type { ActiveAction, Basemap, Point } from "./App";
+import type { ActiveAction, Basemap } from "./App";
 import MappingButton from "./ui/MappingButton";
-import ObjectMenu from "./ObjectMenu";
-
-export interface EraseContext {
-  erasablePoints: Point[];
-  onErasePoint: (newPoints: Point[]) => void;
-  onHoverPoint?: (hoveredPoint: Point) => void;
-}
 
 export interface NewGeoJsonContext {
   onCreateGeojson: (newGeojson: AllGeoJSON) => void;
@@ -20,7 +13,6 @@ export interface NewGeoJsonContext {
 export interface ContxtMenuProps {
   currentActiveAction: ActiveAction;
   onChangeActiveAction: (newActive: ActiveAction) => void;
-  eraseContext: EraseContext;
   newGeojsonContext: NewGeoJsonContext;
   basemap: Basemap;
   onChangeBasemap: (newBasemap: Basemap) => void;
@@ -31,7 +23,6 @@ type AddGeojsonOptions = "JSON" | "IMPORT";
 export default function ContextMenu({
   currentActiveAction,
   onChangeActiveAction,
-  // eraseContext,
   newGeojsonContext,
   basemap,
   onChangeBasemap,
