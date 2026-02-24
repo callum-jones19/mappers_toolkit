@@ -10,7 +10,7 @@ import {
 } from "@vis.gl/react-maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useMemo, useState } from "react";
-import { HelpCircle, MapPin } from "react-feather";
+import { HelpCircle, MapPin, MousePointer, Move } from "react-feather";
 import ContextMenu from "./ContextMenu";
 import MappingButton from "./ui/MappingButton";
 
@@ -146,11 +146,11 @@ function App() {
             <p className="font-bold">Actions</p>
           </div>
           <div className="w-full h-full flex flex-col gap-2 overflow-auto p-2">
-            <input
-              type="search"
-              className="w-full border border-neutral-200 p-2 sticky rounded-sm"
-              placeholder="Search actions..."
-            />
+            {/* <input */}
+            {/*   type="search" */}
+            {/*   className="w-full border border-neutral-200 p-2 sticky rounded-sm" */}
+            {/*   placeholder="Search actions..." */}
+            {/* /> */}
             <div className="bg-neutral-100 p-2 rounded-sm flex flex-col gap-1">
               <div className="border-b border-neutral-300 header-row flex flex-row justify-between items-center py-1">
                 <h3 className="font-semibold">Add</h3>
@@ -217,6 +217,16 @@ function App() {
           </div>
         </div>
         <div id="map-segment" className="w-full h-full relative">
+					<div
+						className="absolute z-30 bg-white top-2 left-2 p-1 flex flex-row gap-1 items-center justify-between shadow-md rounded-sm"
+					>
+						<MappingButton>
+							<MousePointer className="h-5 w-5" />
+						</MappingButton>
+						<MappingButton isActive>
+							<Move className="h-5 w-5" />
+						</MappingButton>
+					</div>
           <Map
             style={{ height: "100%", flexGrow: 1 }}
             latitude={lat}
