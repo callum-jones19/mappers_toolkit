@@ -40,7 +40,7 @@ export default function ContextMenu({
           <p className="font-bold">
             {"Map"}
             <span className="font-normal">
-              {currentActiveAction === "Pan"
+              {currentActiveAction === "None"
                 ? ""
                 : currentActiveAction === "AddPoint"
                 ? " > Add Point"
@@ -54,9 +54,9 @@ export default function ContextMenu({
             </span>
           </p>
           <button
-            hidden={currentActiveAction === "Pan"}
+            hidden={currentActiveAction === "None"}
             onClick={() => {
-              onChangeActiveAction("Pan");
+              onChangeActiveAction("None");
             }}
             className="w-fit hover:bg-white hover:text-blue-600"
             type="button"
@@ -65,7 +65,7 @@ export default function ContextMenu({
           </button>
         </div>
         <div className="w-full basis-full flex flex-col gap-2 p-2">
-          {currentActiveAction === "Pan"
+          {currentActiveAction === "None"
             && (
 							<div className="w-full h-full flex flex-col gap-2">
 								<div className="w-full flex flex-col p-2 gap-2 bg-neutral-100 rounded-sm">

@@ -28,7 +28,8 @@ export interface Line {
 	id: string;
 }
 
-export type ActiveAction = "Pan" | "AddPoint" | "AddLine" | "AddPolygon" | "AddGeojson" | "PreviewGeojson" | "AddWKT" | "PreviewWKT";
+export type ActiveAction = "None" | "AddPoint" | "AddLine" | "AddPolygon" | "AddGeojson" | "PreviewGeojson" | "AddWKT" | "PreviewWKT";
+export type MapMode = "Pan" | "Select";
 export type Basemap = "colorful" | "neutrino";
 
 function App() {
@@ -36,11 +37,13 @@ function App() {
   const [lat, setLat] = useState<number>(-33);
   const [lng, setLng] = useState<number>(151);
   const [zoom, setZoom] = useState<number>(11);
+	const [isDragging, setIsDragging] = useState<boolean>(false);
 
   const [basemap, setBasemap] = useState<Basemap>("colorful");
 
   // App state
-  const [activeAction, setActiveAction] = useState<ActiveAction>("Pan");
+  const [activeAction, setActiveAction] = useState<ActiveAction>("None");
+	const [mapMode, setMapMode] = useState<MapMode>("Pan");
   const [points, setPoints] = useState<Point[]>([]);
   // const [lines, setLines] = useState<Line[]>([]);
   const [geojsons, setGeojsons] = useState<AllGeoJSON[]>([]);
@@ -90,15 +93,29 @@ function App() {
 					<div
 						className="absolute z-30 bg-white top-2 left-2 p-1 flex flex-row gap-1 items-center justify-between shadow-md rounded-sm"
 					>
-						<MappingButton isActive>
+						<MappingButton
+							isActive={mapMode === 'Pan'}
+							onClick={() => {
+								setMapMode('Pan');
+							}}
+						>
 							<Move className="h-5 w-5" />
 						</MappingButton>
-						<MappingButton>
+						<MappingButton
+							isActive={mapMode === 'Select'}
+							onClick={() => {
+								setMapMode('Select');
+							}}
+						>
 							<MousePointer className="h-5 w-5" />
 						</MappingButton>
 					</div>
           <Map
-            style={{ height: "100%", flexGrow: 1 }}
+            style={{
+								height: "100%",
+								flexGrow: 1,
+						}}
+						cursor={mapMode === 'Select' ? 'default' : activeAction === 'AddPoint' ? 'crosshair' : isDragging ? 'grabbing' : 'grab'}
             latitude={lat}
             longitude={lng}
             zoom={zoom}
@@ -113,9 +130,17 @@ function App() {
               });
             }}
             onDrag={e => {
-              setLat(e.viewState.latitude);
-              setLng(e.viewState.longitude);
+							if (mapMode === 'Pan') {
+								setLat(e.viewState.latitude);
+								setLng(e.viewState.longitude);
+							}
             }}
+						onDragStart={() => {
+							setIsDragging(true);
+						}}
+						onDragEnd={() => {
+							setIsDragging(false);
+						}}
             onZoom={e => {
               setLng(e.viewState.longitude);
               setLat(e.viewState.latitude);
@@ -126,7 +151,7 @@ function App() {
               if (activeAction === "AddPoint") {
 								const newP = createNewPoint({ latitude: e.lngLat.lat, longitude: e.lngLat.lng });
 								setPoints([...points, newP]);
-                setActiveAction("Pan");
+                setMapMode("Pan");
               }
             }}
           >
