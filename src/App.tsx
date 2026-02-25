@@ -11,17 +11,22 @@ import MappingButton from "./ui/MappingButton";
 export interface Coordinate {
   latitude: number;
   longitude: number;
-}
+};
 
 export interface Point {
   position: Coordinate;
   id: string;
-}
+};
 
 export interface Line {
   points: Coordinate[];
   id: string;
-}
+};
+
+export interface MappedGeojson {
+	geojson: AllGeoJSON;
+	id: string;
+};
 
 export type ActiveAction =
   | "None"
@@ -49,10 +54,11 @@ function App() {
   const [mapMode, setMapMode] = useState<MapMode>("Pan");
   const [points, setPoints] = useState<Point[]>([]);
   // const [lines, setLines] = useState<Line[]>([]);
-  const [geojsons, setGeojsons] = useState<AllGeoJSON[]>([]);
+  const [geojsons, setGeojsons] = useState<MappedGeojson[]>([]);
   const [previewGeojson, setPreviewGeojson] = useState<AllGeoJSON | null>(null);
 
   const pointIdCounter = useRef<number>(0);
+	const geojsonsIdCounter = useRef<number>(0);
 
   function createNewPoint(position: Coordinate) {
     const newPointId = pointIdCounter.current;
@@ -143,7 +149,6 @@ function App() {
               if (activeAction === "AddPoint") {
                 const newP = createNewPoint({ latitude: e.lngLat.lat, longitude: e.lngLat.lng });
                 setPoints([...points, newP]);
-                setMapMode("Pan");
               }
             }}
           >
@@ -159,7 +164,7 @@ function App() {
             {/*     </Source> */}
             {/*   )} */}
             {geojsons.map(currGeojson => (
-              <Source key={JSON.stringify(currGeojson)} id="geojsons" type="geojson" data={currGeojson}>
+              <Source key={currGeojson.id} id="geojsons" type="geojson" data={currGeojson.geojson}>
                 <Layer {...geojsonsFillLayer} />
                 <Layer {...geojsonsLineLayer} />
                 <Layer {...geojsonsSymbolLayer} />
@@ -182,8 +187,13 @@ function App() {
               setActiveAction(newAction);
             }}
             newGeojsonContext={{
-              onCreateGeojson: newGeojson => {
-                console.log(newGeojson);
+              onCreateGeojson: g => {
+								const currGeojsonId = geojsonsIdCounter.current;
+								geojsonsIdCounter.current += 1;
+								const newGeojson: MappedGeojson = {
+									geojson: g,
+									id: currGeojsonId.toString(),
+								}
                 setGeojsons([...geojsons, newGeojson]);
               },
               onLiveUpdateGeojson: newGeojson => {
