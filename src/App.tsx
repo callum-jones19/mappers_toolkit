@@ -65,21 +65,6 @@ function App() {
     return newPoint;
   }
 
-  // const lineGeoJson = useMemo(() => {
-  //   if (lines.length === 0) {
-  //     return null;
-  //   } else {
-  //     const allLinesAsGeoJson = lines.map(targetLine => {
-  //       const lineToPositionArr = targetLine.points.map(p => [p.longitude, p.latitude]);
-  //       const lineStr = lineString(lineToPositionArr, { name: "test" });
-  //       return lineStr;
-  //     });
-  //
-  //     const consolidatedGeoJsons = featureCollection(allLinesAsGeoJson);
-  //     return consolidatedGeoJsons;
-  //   }
-  // }, [lines]);
-
   return (
     <>
       <div id="app-container" className="w-screen h-screen flex flex-row">
