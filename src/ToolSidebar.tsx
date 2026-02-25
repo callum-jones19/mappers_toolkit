@@ -29,7 +29,7 @@ export default function ToolSidebar({
                 isActive={activeAction === "AddPoint"}
                 onClick={() => {
                   if (activeAction === "AddPoint") {
-                    onChangeActiveAction("Pan");
+                    onChangeActiveAction("None");
                   } else {
                     onChangeActiveAction("AddPoint");
                   }
@@ -42,7 +42,7 @@ export default function ToolSidebar({
                 isActive={activeAction === "AddLine"}
                 onClick={() => {
                   if (activeAction === "AddLine") {
-                    onChangeActiveAction("Pan");
+                    onChangeActiveAction("None");
                   } else {
                     onChangeActiveAction("AddLine");
                   }
@@ -54,7 +54,7 @@ export default function ToolSidebar({
                 isActive={activeAction === "AddGeojson"}
                 onClick={() => {
                   if (activeAction === "AddGeojson") {
-                    onChangeActiveAction("Pan");
+                    onChangeActiveAction("None");
                   } else {
                     onChangeActiveAction("AddGeojson");
                   }
@@ -66,7 +66,7 @@ export default function ToolSidebar({
                 isActive={activeAction === "AddWKT"}
                 onClick={() => {
                   if (activeAction === "AddWKT") {
-                    onChangeActiveAction("Pan");
+                    onChangeActiveAction("None");
                   } else {
                     onChangeActiveAction("AddWKT");
                   }
