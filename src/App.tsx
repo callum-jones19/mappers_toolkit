@@ -1,17 +1,12 @@
 import { type AllGeoJSON } from "@turf/turf";
-import {
-  Layer,
-  Map,
-  Marker,
-  Source,
-} from "@vis.gl/react-maplibre";
+import { Layer, Map, Marker, Source } from "@vis.gl/react-maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useRef, useState } from "react";
 import { MapPin, MousePointer, Move } from "react-feather";
 import ContextMenu from "./ContextMenu";
-import MappingButton from "./ui/MappingButton";
 import { geojsonsFillLayer, geojsonsLineLayer, geojsonsSymbolLayer } from "./LayerDefinitions";
 import ToolSidebar from "./ToolSidebar";
+import MappingButton from "./ui/MappingButton";
 
 export interface Coordinate {
   latitude: number;
@@ -19,16 +14,24 @@ export interface Coordinate {
 }
 
 export interface Point {
-	position: Coordinate;
-	id: string;
+  position: Coordinate;
+  id: string;
 }
 
 export interface Line {
   points: Coordinate[];
-	id: string;
+  id: string;
 }
 
-export type ActiveAction = "None" | "AddPoint" | "AddLine" | "AddPolygon" | "AddGeojson" | "PreviewGeojson" | "AddWKT" | "PreviewWKT";
+export type ActiveAction =
+  | "None"
+  | "AddPoint"
+  | "AddLine"
+  | "AddPolygon"
+  | "AddGeojson"
+  | "PreviewGeojson"
+  | "AddWKT"
+  | "PreviewWKT";
 export type MapMode = "Pan" | "Select";
 export type Basemap = "colorful" | "neutrino";
 
@@ -37,30 +40,30 @@ function App() {
   const [lat, setLat] = useState<number>(-33);
   const [lng, setLng] = useState<number>(151);
   const [zoom, setZoom] = useState<number>(11);
-	const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
 
   const [basemap, setBasemap] = useState<Basemap>("colorful");
 
   // App state
   const [activeAction, setActiveAction] = useState<ActiveAction>("None");
-	const [mapMode, setMapMode] = useState<MapMode>("Pan");
+  const [mapMode, setMapMode] = useState<MapMode>("Pan");
   const [points, setPoints] = useState<Point[]>([]);
   // const [lines, setLines] = useState<Line[]>([]);
   const [geojsons, setGeojsons] = useState<AllGeoJSON[]>([]);
-	const [previewGeojson, setPreviewGeojson] = useState<AllGeoJSON | null>(null);
+  const [previewGeojson, setPreviewGeojson] = useState<AllGeoJSON | null>(null);
 
-	const pointIdCounter = useRef<number>(0);
+  const pointIdCounter = useRef<number>(0);
 
-	function createNewPoint(position: Coordinate) {
-		const newPointId = pointIdCounter.current;
-		pointIdCounter.current = pointIdCounter.current + 1;
-		const newPoint: Point = {
-			id: newPointId.toString(),
-			position,
-		};
+  function createNewPoint(position: Coordinate) {
+    const newPointId = pointIdCounter.current;
+    pointIdCounter.current = pointIdCounter.current + 1;
+    const newPoint: Point = {
+      id: newPointId.toString(),
+      position,
+    };
 
-		return newPoint;
-	}
+    return newPoint;
+  }
 
   // const lineGeoJson = useMemo(() => {
   //   if (lines.length === 0) {
@@ -80,42 +83,46 @@ function App() {
   return (
     <>
       <div id="app-container" className="w-screen h-screen flex flex-row">
-				<ToolSidebar
-					activeAction={activeAction}
-					onChangeActiveAction={newActiveAction => {
-						setActiveAction(newActiveAction);
-					}}
-				/>
+        <ToolSidebar
+          activeAction={activeAction}
+          onChangeActiveAction={newActiveAction => {
+            setActiveAction(newActiveAction);
+          }}
+        />
         <div
-					id="map-segment"
-					className={`w-full h-full relative`}
-				>
-					<div
-						className="absolute z-30 bg-white top-2 left-2 p-1 flex flex-row gap-1 items-center justify-between shadow-md rounded-sm"
-					>
-						<MappingButton
-							isActive={mapMode === 'Pan'}
-							onClick={() => {
-								setMapMode('Pan');
-							}}
-						>
-							<Move className="h-5 w-5" />
-						</MappingButton>
-						<MappingButton
-							isActive={mapMode === 'Select'}
-							onClick={() => {
-								setMapMode('Select');
-							}}
-						>
-							<MousePointer className="h-5 w-5" />
-						</MappingButton>
-					</div>
+          id="map-segment"
+          className={`w-full h-full relative`}
+        >
+          <div className="absolute z-30 bg-white top-2 left-2 p-1 flex flex-row gap-1 items-center justify-between shadow-md rounded-sm">
+            <MappingButton
+              isActive={mapMode === "Pan"}
+              onClick={() => {
+                setMapMode("Pan");
+              }}
+            >
+              <Move className="h-5 w-5" />
+            </MappingButton>
+            <MappingButton
+              isActive={mapMode === "Select"}
+              onClick={() => {
+                setMapMode("Select");
+              }}
+            >
+              <MousePointer className="h-5 w-5" />
+            </MappingButton>
+          </div>
           <Map
             style={{
-								height: "100%",
-								flexGrow: 1,
-						}}
-						cursor={mapMode === 'Select' ? 'default' : activeAction === 'AddPoint' ? 'crosshair' : isDragging ? 'grabbing' : 'grab'}
+              height: "100%",
+              flexGrow: 1,
+            }}
+            cursor={mapMode === "Select"
+              ? "default"
+              : activeAction === "AddPoint"
+              ? "crosshair"
+              : isDragging
+              ? "grabbing"
+              : "grab"}
             latitude={lat}
             longitude={lng}
             zoom={zoom}
@@ -130,17 +137,17 @@ function App() {
               });
             }}
             onDrag={e => {
-							if (mapMode === 'Pan') {
-								setLat(e.viewState.latitude);
-								setLng(e.viewState.longitude);
-							}
+              if (mapMode === "Pan") {
+                setLat(e.viewState.latitude);
+                setLng(e.viewState.longitude);
+              }
             }}
-						onDragStart={() => {
-							setIsDragging(true);
-						}}
-						onDragEnd={() => {
-							setIsDragging(false);
-						}}
+            onDragStart={() => {
+              setIsDragging(true);
+            }}
+            onDragEnd={() => {
+              setIsDragging(false);
+            }}
             onZoom={e => {
               setLng(e.viewState.longitude);
               setLat(e.viewState.latitude);
@@ -149,8 +156,8 @@ function App() {
             mapStyle={`https://tiles.versatiles.org/assets/styles/${basemap}/style.json`}
             onClick={e => {
               if (activeAction === "AddPoint") {
-								const newP = createNewPoint({ latitude: e.lngLat.lat, longitude: e.lngLat.lng });
-								setPoints([...points, newP]);
+                const newP = createNewPoint({ latitude: e.lngLat.lat, longitude: e.lngLat.lng });
+                setPoints([...points, newP]);
                 setMapMode("Pan");
               }
             }}
@@ -173,13 +180,14 @@ function App() {
                 <Layer {...geojsonsSymbolLayer} />
               </Source>
             ))}
-						{previewGeojson !== null &&
-							<Source key={JSON.stringify(previewGeojson)} id='preview-geojson' type='geojson' data={previewGeojson}>
-                <Layer {...geojsonsFillLayer} />
-                <Layer {...geojsonsLineLayer} />
-                <Layer {...geojsonsSymbolLayer} />
-							</Source>
-						}
+            {previewGeojson !== null
+              && (
+                <Source key={JSON.stringify(previewGeojson)} id="preview-geojson" type="geojson" data={previewGeojson}>
+                  <Layer {...geojsonsFillLayer} />
+                  <Layer {...geojsonsLineLayer} />
+                  <Layer {...geojsonsSymbolLayer} />
+                </Source>
+              )}
           </Map>
         </div>
         <div id="context-window" className="w-md h-full border-l border-neutral-400 flex flex-col">
@@ -193,10 +201,10 @@ function App() {
                 console.log(newGeojson);
                 setGeojsons([...geojsons, newGeojson]);
               },
-							onLiveUpdateGeojson: newGeojson => {
-								setPreviewGeojson(newGeojson);
-								console.log(newGeojson);
-							}
+              onLiveUpdateGeojson: newGeojson => {
+                setPreviewGeojson(newGeojson);
+                console.log(newGeojson);
+              },
             }}
             basemap={basemap}
             onChangeBasemap={e => {

@@ -7,7 +7,7 @@ import MappingButton from "./ui/MappingButton";
 
 export interface NewGeoJsonContext {
   onCreateGeojson: (newGeojson: AllGeoJSON) => void;
-	onLiveUpdateGeojson: (newGeojson: AllGeoJSON | null) => void;
+  onLiveUpdateGeojson: (newGeojson: AllGeoJSON | null) => void;
 }
 
 export interface ContxtMenuProps {
@@ -30,7 +30,7 @@ export default function ContextMenu({
   // If AddGeojson context, validate that the entered geojson is valid.
   const [newGeojson, setNewGeojson] = useState<string>("");
   const [lastGeojsonInvalid, setLastGeojsonInvalid] = useState<boolean>(false);
-	const [previewGeojson, setPreviewGeojson] = useState<boolean>(false);
+  const [previewGeojson, setPreviewGeojson] = useState<boolean>(false);
 
   const [currentGeojsonMode, setCurrentGeojsonMode] = useState<AddGeojsonOptions>("JSON");
   return (
@@ -67,45 +67,49 @@ export default function ContextMenu({
         <div className="w-full basis-full flex flex-col gap-2 p-2">
           {currentActiveAction === "None"
             && (
-							<div className="w-full h-full flex flex-col gap-2">
-								<div className="w-full flex flex-col p-2 gap-2 bg-neutral-100 rounded-sm">
-									<div className="flex flex-row justify-between items-center">
-										<label htmlFor="basemaps">Basemap</label>
-										<select
-											defaultValue={basemap}
-											onChange={e => {
-												// FIXME
-												console.log(e.currentTarget.value);
-												onChangeBasemap(e.currentTarget.value);
-											}}
-											name="basemaps"
-											id="basemaps"
-											className="p-1 rounded-sm border-neutral-400 bg-neutral-200 border"
-										>
-											<option value="colorful">Colorful</option>
-											<option value="neutrino">Neutrino</option>
-										</select>
-									</div>
-							</div>
-							</div>
+              <div className="w-full h-full flex flex-col gap-2">
+                <div className="w-full flex flex-col p-2 gap-2 bg-neutral-100 rounded-sm">
+                  <div className="flex flex-row justify-between items-center">
+                    <label htmlFor="basemaps">Basemap</label>
+                    <select
+                      defaultValue={basemap}
+                      onChange={e => {
+                        // FIXME
+                        console.log(e.currentTarget.value);
+                        onChangeBasemap(e.currentTarget.value);
+                      }}
+                      name="basemaps"
+                      id="basemaps"
+                      className="p-1 rounded-sm border-neutral-400 bg-neutral-200 border"
+                    >
+                      <option value="colorful">Colorful</option>
+                      <option value="neutrino">Neutrino</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
             )}
           {currentActiveAction === "AddGeojson"
             && (
               <>
-								<div className="w-full flex flex-row justify-evenly gap-1 bg-neutral-100 rounded-sm p-1">
-									<MappingButton
-										isActive={currentGeojsonMode === 'JSON'}
-										onClick={() => {setCurrentGeojsonMode('JSON')}}
-									>
-										JSON
-									</MappingButton>
-									<MappingButton
-										isActive={currentGeojsonMode === 'IMPORT'}
-										onClick={() => {setCurrentGeojsonMode('IMPORT')}}
-									>
-										Upload
-									</MappingButton>
-								</div>
+                <div className="w-full flex flex-row justify-evenly gap-1 bg-neutral-100 rounded-sm p-1">
+                  <MappingButton
+                    isActive={currentGeojsonMode === "JSON"}
+                    onClick={() => {
+                      setCurrentGeojsonMode("JSON");
+                    }}
+                  >
+                    JSON
+                  </MappingButton>
+                  <MappingButton
+                    isActive={currentGeojsonMode === "IMPORT"}
+                    onClick={() => {
+                      setCurrentGeojsonMode("IMPORT");
+                    }}
+                  >
+                    Upload
+                  </MappingButton>
+                </div>
                 <div className="w-full h-full flex flex-col bg-neutral-100 rounded-sm p-2 gap-2">
                   {currentGeojsonMode === "JSON"
                     && (
@@ -119,36 +123,35 @@ export default function ContextMenu({
                             setNewGeojson(e.currentTarget.value);
                             setLastGeojsonInvalid(false);
 
-														if (previewGeojson) {
-															try {
-																const currGeojson = check(e.currentTarget.value);
-																newGeojsonContext.onLiveUpdateGeojson(currGeojson);
-																setLastGeojsonInvalid(false);
-															} catch (e) {
-																// geojson is invalid;
-																console.error(e);
-																setLastGeojsonInvalid(true);
-																newGeojsonContext.onLiveUpdateGeojson(null);
-															}
-														}
-
+                            if (previewGeojson) {
+                              try {
+                                const currGeojson = check(e.currentTarget.value);
+                                newGeojsonContext.onLiveUpdateGeojson(currGeojson);
+                                setLastGeojsonInvalid(false);
+                              } catch (e) {
+                                // geojson is invalid;
+                                console.error(e);
+                                setLastGeojsonInvalid(true);
+                                newGeojsonContext.onLiveUpdateGeojson(null);
+                              }
+                            }
                           }}
                         />
-												<div className="w-full flex flex-row justify-between">
-													<label htmlFor="live-preview" className="hover:text-blue-500">Live preview</label>
-													<input
-														type='checkbox'
-														id='live-preview'
-														className="hover:text-blue-500"
-														checked={previewGeojson}
-														onChange={e => {
-															setPreviewGeojson(e.currentTarget.checked);
-															if (!e.currentTarget.checked) {
-																newGeojsonContext.onLiveUpdateGeojson(null);
-															}
-														}}
-													/>
-												</div>
+                        <div className="w-full flex flex-row justify-between">
+                          <label htmlFor="live-preview" className="hover:text-blue-500">Live preview</label>
+                          <input
+                            type="checkbox"
+                            id="live-preview"
+                            className="hover:text-blue-500"
+                            checked={previewGeojson}
+                            onChange={e => {
+                              setPreviewGeojson(e.currentTarget.checked);
+                              if (!e.currentTarget.checked) {
+                                newGeojsonContext.onLiveUpdateGeojson(null);
+                              }
+                            }}
+                          />
+                        </div>
                         <MappingButton
                           disabled={newGeojson.length === 0}
                           type="button"
