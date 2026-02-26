@@ -2,11 +2,10 @@ import { type AllGeoJSON } from "@turf/turf";
 import { Layer, Map, Marker, Source } from "@vis.gl/react-maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useRef, useState } from "react";
-import { MapPin, MousePointer, Move } from "react-feather";
+import { MapPin } from "react-feather";
 import ContextMenu from "./ContextMenu";
 import { geojsonsFillLayer, geojsonsLineLayer, geojsonsSymbolLayer } from "./LayerDefinitions";
 import ToolSidebar from "./ToolSidebar";
-import MappingButton from "./ui/MappingButton";
 
 export interface Coordinate {
   latitude: number;
@@ -51,11 +50,13 @@ function App() {
 
   // App state
   const [activeAction, setActiveAction] = useState<ActiveAction>("None");
-  const [mapMode, setMapMode] = useState<MapMode>("Pan");
+  // const [mapMode, setMapMode] = useState<MapMode>("Pan");
   const [points, setPoints] = useState<Point[]>([]);
   // const [lines, setLines] = useState<Line[]>([]);
   const [geojsons, setGeojsons] = useState<MappedGeojson[]>([]);
   const [previewGeojson, setPreviewGeojson] = useState<AllGeoJSON | null>(null);
+	const [hoveredPoint, setHoveredPoint] = useState<null | Point>(null);
+	const [selectedPoint, setSelectedPoint] = useState<null | Point>(null);
 
   const pointIdCounter = useRef<number>(0);
   const geojsonsIdCounter = useRef<number>(0);
@@ -84,36 +85,36 @@ function App() {
           id="map-segment"
           className={`w-full h-full relative`}
         >
-          <div className="absolute z-30 bg-white top-2 left-2 p-1 flex flex-row gap-1 items-center justify-between shadow-md rounded-sm">
-            <MappingButton
-              isActive={mapMode === "Pan"}
-              onClick={() => {
-                setMapMode("Pan");
-              }}
-            >
-              <Move className="h-5 w-5" />
-            </MappingButton>
-            <MappingButton
-              isActive={mapMode === "Select"}
-              onClick={() => {
-                setMapMode("Select");
-              }}
-            >
-              <MousePointer className="h-5 w-5" />
-            </MappingButton>
-          </div>
+          {/* <div className="absolute z-30 bg-white top-2 left-2 p-1 flex flex-row gap-1 items-center justify-between shadow-md rounded-sm"> */}
+          {/*   <MappingButton */}
+          {/*     isActive={mapMode === "Pan"} */}
+          {/*     onClick={() => { */}
+          {/*       setMapMode("Pan"); */}
+          {/*     }} */}
+          {/*   > */}
+          {/*     <Move className="h-5 w-5" /> */}
+          {/*   </MappingButton> */}
+          {/*   <MappingButton */}
+          {/*     isActive={mapMode === "Select"} */}
+          {/*     onClick={() => { */}
+          {/*       setMapMode("Select"); */}
+          {/*     }} */}
+          {/*   > */}
+          {/*     <MousePointer className="h-5 w-5" /> */}
+          {/*   </MappingButton> */}
+          {/* </div> */}
           <Map
             style={{
               height: "100%",
               flexGrow: 1,
             }}
-            cursor={mapMode === "Select"
-              ? "default"
-              : activeAction === "AddPoint"
+            cursor={activeAction === "AddPoint"
               ? "crosshair"
               : isDragging
               ? "grabbing"
-              : "grab"}
+						  : hoveredPoint !== null
+						  ? "default"
+						  : "grab"}
             latitude={lat}
             longitude={lng}
             zoom={zoom}
@@ -128,10 +129,8 @@ function App() {
               });
             }}
             onDrag={e => {
-              if (mapMode === "Pan") {
                 setLat(e.viewState.latitude);
                 setLng(e.viewState.longitude);
-              }
             }}
             onDragStart={() => {
               setIsDragging(true);
@@ -149,23 +148,29 @@ function App() {
               if (activeAction === "AddPoint") {
                 const newP = createNewPoint({ latitude: e.lngLat.lat, longitude: e.lngLat.lng });
                 setPoints([...points, newP]);
-              } else if (mapMode === "Select") {
-                const currObj = e.features;
-                console.log(currObj);
               }
             }}
           >
             {points.map(point => (
               <Marker
-                key={point.id}
-                longitude={point.position.longitude}
-                latitude={point.position.latitude}
-                onClick={e => {
-                  console.log(e);
-                  console.log(point);
-                }}
-              >
-                <MapPin className="text-white fill-neutral-500" />
+								key={point.id}
+								longitude={point.position.longitude}
+								latitude={point.position.latitude}
+							>
+                <MapPin
+									className={`text-white
+										${hoveredPoint?.id === point.id ? 'fill-blue-500 cursor-default' : 
+										selectedPoint?.id === point.id ? 'fill-blue-500' : 'fill-neutral-500'}`}
+									onClick={() => {
+										setSelectedPoint(point);
+									}}
+									onMouseEnter={() => {
+										setHoveredPoint(point);
+									}}
+									onMouseLeave={() => {
+										setHoveredPoint(null);
+									}}
+								/>
               </Marker>
             ))}
             {geojsons.map(currGeojson => (
@@ -220,6 +225,7 @@ function App() {
             onChangeBasemap={e => {
               setBasemap(e);
             }}
+						selectedPoint={selectedPoint}
           />
         </div>
       </div>
