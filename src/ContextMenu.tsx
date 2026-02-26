@@ -2,7 +2,7 @@ import { check } from "@placemarkio/check-geojson";
 import { type AllGeoJSON } from "@turf/turf";
 import { useState } from "react";
 import { X } from "react-feather";
-import type { ActiveAction, Basemap } from "./App";
+import type { ActiveAction, Basemap, Point } from "./App";
 import MappingButton from "./ui/MappingButton";
 
 export interface NewGeoJsonContext {
@@ -16,6 +16,7 @@ export interface ContxtMenuProps {
   newGeojsonContext: NewGeoJsonContext;
   basemap: Basemap;
   onChangeBasemap: (newBasemap: Basemap) => void;
+	selectedPoint: null | Point;
 }
 
 type AddGeojsonOptions = "JSON" | "IMPORT";
@@ -26,6 +27,7 @@ export default function ContextMenu({
   newGeojsonContext,
   basemap,
   onChangeBasemap,
+	selectedPoint,
 }: ContxtMenuProps) {
   // If AddGeojson context, validate that the entered geojson is valid.
   const [newGeojson, setNewGeojson] = useState<string>("");
@@ -65,7 +67,7 @@ export default function ContextMenu({
           </button>
         </div>
         <div className="w-full basis-full flex flex-col gap-2 p-2">
-          {currentActiveAction === "None"
+          {currentActiveAction === "None" && selectedPoint === null
             && (
               <div className="w-full h-full flex flex-col gap-2">
                 <div className="w-full flex flex-col p-2 gap-2 bg-neutral-100 rounded-sm">
@@ -89,6 +91,14 @@ export default function ContextMenu({
                 </div>
               </div>
             )}
+						{currentActiveAction === "None" && selectedPoint !== null &&
+							<>
+								<div>
+									<p>{selectedPoint.id}</p>
+									<p>{selectedPoint.position.latitude}, {selectedPoint.position.longitude}</p>
+								</div>
+							</>
+						}
           {currentActiveAction === "AddGeojson"
             && (
               <>

@@ -56,6 +56,7 @@ function App() {
   const [geojsons, setGeojsons] = useState<MappedGeojson[]>([]);
   const [previewGeojson, setPreviewGeojson] = useState<AllGeoJSON | null>(null);
 	const [hoveredPoint, setHoveredPoint] = useState<null | Point>(null);
+	const [selectedPoint, setSelectedPoint] = useState<null | Point>(null);
 
   const pointIdCounter = useRef<number>(0);
   const geojsonsIdCounter = useRef<number>(0);
@@ -157,7 +158,12 @@ function App() {
 								latitude={point.position.latitude}
 							>
                 <MapPin
-									className={`text-white ${hoveredPoint?.id === point.id ? 'fill-blue-500 cursor-default' : 'fill-neutral-500 '}`}
+									className={`text-white
+										${hoveredPoint?.id === point.id ? 'fill-blue-500 cursor-default' : 
+										selectedPoint?.id === point.id ? 'fill-blue-500' : 'fill-neutral-500'}`}
+									onClick={() => {
+										setSelectedPoint(point);
+									}}
 									onMouseEnter={() => {
 										setHoveredPoint(point);
 									}}
@@ -215,6 +221,7 @@ function App() {
             onChangeBasemap={e => {
               setBasemap(e);
             }}
+						selectedPoint={selectedPoint}
           />
         </div>
       </div>
