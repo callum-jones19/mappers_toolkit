@@ -5,11 +5,13 @@ import MappingButton from "./ui/MappingButton";
 export interface ToolSidebarProps {
   activeAction: ActiveAction;
   onChangeActiveAction: (newActiveAction: ActiveAction) => void;
+	onDeleteAllPoints: () => void;
 }
 
 export default function ToolSidebar({
   activeAction,
   onChangeActiveAction,
+	onDeleteAllPoints,
 }: ToolSidebarProps) {
   return (
     <>
@@ -73,6 +75,22 @@ export default function ToolSidebar({
               Add Wellknown Text (WKT)
             </MappingButton>
           </div>
+          <div className="bg-neutral-100 p-2 rounded-sm flex flex-col gap-1">
+            <div className="border-b border-neutral-300 header-row flex flex-row justify-between items-center py-1">
+              <h3 className="font-semibold">Delete</h3>
+              <HelpCircle className="font-normal h-4 text-neutral-500" />
+            </div>
+            <MappingButton
+              onClick={() => {
+								const shouldDelete = confirm("Do you really want to delete all points? This cannot be undone?")
+								if (shouldDelete) {
+									onDeleteAllPoints();
+								}
+              }}
+            >
+							Delete points
+            </MappingButton>
+					</div>
         </div>
       </div>
     </>

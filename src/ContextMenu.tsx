@@ -1,7 +1,7 @@
 import { check } from "@placemarkio/check-geojson";
 import { type AllGeoJSON } from "@turf/turf";
 import { useState } from "react";
-import { X } from "react-feather";
+import { ChevronLeft } from "react-feather";
 import type { ActiveAction, Basemap, Point } from "./App";
 import MappingButton from "./ui/MappingButton";
 
@@ -60,10 +60,10 @@ export default function ContextMenu({
             onClick={() => {
               onChangeActiveAction("None");
             }}
-            className="w-fit hover:bg-white hover:text-blue-600"
+            className="w-fit hover:bg-neutral-200 hover:text-blue-600 rounded-sm"
             type="button"
           >
-            <X />
+            <ChevronLeft />
           </button>
         </div>
         <div className="w-full basis-full flex flex-col gap-2 p-2">

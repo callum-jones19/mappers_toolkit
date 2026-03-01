@@ -113,6 +113,9 @@ function App() {
                 onChangeActiveAction={newActiveAction => {
                   setActiveAction(newActiveAction);
                 }}
+								onDeleteAllPoints={() => {
+									setPoints([]);
+								}}
               />
             )}
         </div>
