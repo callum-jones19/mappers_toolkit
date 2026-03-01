@@ -16,7 +16,7 @@ export interface ContxtMenuProps {
   newGeojsonContext: NewGeoJsonContext;
   basemap: Basemap;
   onChangeBasemap: (newBasemap: Basemap) => void;
-	selectedPoint: null | Point;
+  selectedPoint: null | Point;
 }
 
 type AddGeojsonOptions = "JSON" | "IMPORT";
@@ -27,7 +27,7 @@ export default function ContextMenu({
   newGeojsonContext,
   basemap,
   onChangeBasemap,
-	selectedPoint,
+  selectedPoint,
 }: ContxtMenuProps) {
   // If AddGeojson context, validate that the entered geojson is valid.
   const [newGeojson, setNewGeojson] = useState<string>("");
@@ -91,14 +91,15 @@ export default function ContextMenu({
                 </div>
               </div>
             )}
-						{currentActiveAction === "None" && selectedPoint !== null &&
-							<>
-								<div>
-									<p>{selectedPoint.id}</p>
-									<p>{selectedPoint.position.latitude}, {selectedPoint.position.longitude}</p>
-								</div>
-							</>
-						}
+          {currentActiveAction === "None" && selectedPoint !== null
+            && (
+              <>
+                <div>
+                  <p>{selectedPoint.id}</p>
+                  <p>{selectedPoint.position.latitude}, {selectedPoint.position.longitude}</p>
+                </div>
+              </>
+            )}
           {currentActiveAction === "AddGeojson"
             && (
               <>

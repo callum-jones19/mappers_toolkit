@@ -6,6 +6,7 @@ import { MapPin } from "react-feather";
 import ContextMenu from "./ContextMenu";
 import { geojsonsFillLayer, geojsonsLineLayer, geojsonsSymbolLayer } from "./LayerDefinitions";
 import ToolSidebar from "./ToolSidebar";
+import ActionSidebar from "./ActionSidebar";
 
 export interface Coordinate {
   latitude: number;
@@ -55,8 +56,8 @@ function App() {
   // const [lines, setLines] = useState<Line[]>([]);
   const [geojsons, setGeojsons] = useState<MappedGeojson[]>([]);
   const [previewGeojson, setPreviewGeojson] = useState<AllGeoJSON | null>(null);
-	const [hoveredPoint, setHoveredPoint] = useState<null | Point>(null);
-	const [selectedPoint, setSelectedPoint] = useState<null | Point>(null);
+  const [hoveredPoint, setHoveredPoint] = useState<null | Point>(null);
+  const [selectedPoint, setSelectedPoint] = useState<null | Point>(null);
 
   const pointIdCounter = useRef<number>(0);
   const geojsonsIdCounter = useRef<number>(0);
@@ -75,15 +76,49 @@ function App() {
   return (
     <>
       <div id="app-container" className="w-screen h-screen flex flex-row">
-        <ToolSidebar
-          activeAction={activeAction}
-          onChangeActiveAction={newActiveAction => {
-            setActiveAction(newActiveAction);
-          }}
-        />
+        <div id="tools-sidebar" className="w-72 h-full border-r border-neutral-400 shrink-0">
+          {activeAction !== "None"
+            && (
+              <ContextMenu
+                currentActiveAction={activeAction}
+                onChangeActiveAction={newAction => {
+                  setActiveAction(newAction);
+                }}
+                newGeojsonContext={{
+                  onCreateGeojson: g => {
+                    const currGeojsonId = geojsonsIdCounter.current;
+                    geojsonsIdCounter.current += 1;
+                    const newGeojson: MappedGeojson = {
+                      geojson: g,
+                      id: currGeojsonId.toString(),
+                    };
+                    setGeojsons([...geojsons, newGeojson]);
+                  },
+                  onLiveUpdateGeojson: newGeojson => {
+                    setPreviewGeojson(newGeojson);
+                    console.log(newGeojson);
+                  },
+                }}
+                basemap={basemap}
+                onChangeBasemap={e => {
+                  setBasemap(e);
+                }}
+                selectedPoint={selectedPoint}
+              />
+            )}
+          {activeAction === "None"
+            && (
+              <ToolSidebar
+                activeAction={activeAction}
+                onChangeActiveAction={newActiveAction => {
+                  setActiveAction(newActiveAction);
+                }}
+              />
+            )}
+        </div>
         <div
           id="map-segment"
-          className={`w-full h-full relative`}
+          className='w-full h-full relative grow'
         >
           {/* <div className="absolute z-30 bg-white top-2 left-2 p-1 flex flex-row gap-1 items-center justify-between shadow-md rounded-sm"> */}
           {/*   <MappingButton */}
@@ -112,9 +147,9 @@ function App() {
               ? "crosshair"
               : isDragging
               ? "grabbing"
-						  : hoveredPoint !== null
-						  ? "default"
-						  : "grab"}
+              : hoveredPoint !== null
+              ? "default"
+              : "grab"}
             latitude={lat}
             longitude={lng}
             zoom={zoom}
@@ -129,8 +164,8 @@ function App() {
               });
             }}
             onDrag={e => {
-                setLat(e.viewState.latitude);
-                setLng(e.viewState.longitude);
+              setLat(e.viewState.latitude);
+              setLng(e.viewState.longitude);
             }}
             onDragStart={() => {
               setIsDragging(true);
@@ -153,24 +188,29 @@ function App() {
           >
             {points.map(point => (
               <Marker
-								key={point.id}
-								longitude={point.position.longitude}
-								latitude={point.position.latitude}
-							>
+                key={point.id}
+                longitude={point.position.longitude}
+                latitude={point.position.latitude}
+              >
                 <MapPin
-									className={`text-white
-										${hoveredPoint?.id === point.id ? 'fill-blue-500 cursor-default' : 
-										selectedPoint?.id === point.id ? 'fill-blue-500' : 'fill-neutral-500'}`}
-									onClick={() => {
-										setSelectedPoint(point);
-									}}
-									onMouseEnter={() => {
-										setHoveredPoint(point);
-									}}
-									onMouseLeave={() => {
-										setHoveredPoint(null);
-									}}
-								/>
+                  className={`text-white
+										${
+                    hoveredPoint?.id === point.id
+                      ? "fill-blue-500 cursor-default"
+                      : selectedPoint?.id === point.id
+                      ? "fill-blue-500"
+                      : "fill-neutral-500"
+                  }`}
+                  onClick={() => {
+                    setSelectedPoint(point);
+                  }}
+                  onMouseEnter={() => {
+                    setHoveredPoint(point);
+                  }}
+                  onMouseLeave={() => {
+                    setHoveredPoint(null);
+                  }}
+                />
               </Marker>
             ))}
             {geojsons.map(currGeojson => (
@@ -200,33 +240,15 @@ function App() {
               )}
           </Map>
         </div>
-        <div id="context-window" className="w-md h-full border-l border-neutral-400 flex flex-col">
-          <ContextMenu
-            currentActiveAction={activeAction}
-            onChangeActiveAction={newAction => {
-              setActiveAction(newAction);
-            }}
-            newGeojsonContext={{
-              onCreateGeojson: g => {
-                const currGeojsonId = geojsonsIdCounter.current;
-                geojsonsIdCounter.current += 1;
-                const newGeojson: MappedGeojson = {
-                  geojson: g,
-                  id: currGeojsonId.toString(),
-                };
-                setGeojsons([...geojsons, newGeojson]);
-              },
-              onLiveUpdateGeojson: newGeojson => {
-                setPreviewGeojson(newGeojson);
-                console.log(newGeojson);
-              },
-            }}
-            basemap={basemap}
-            onChangeBasemap={e => {
-              setBasemap(e);
-            }}
+        <div id="context-window" className="w-72 h-full border-l border-neutral-400 flex flex-col shrink-0">
+					<ActionSidebar
 						selectedPoint={selectedPoint}
-          />
+						onDeletePoint={deletedPoint => {
+							setSelectedPoint(null);
+							const updatedPoints = points.filter(p => p.id !== deletedPoint.id);
+							setPoints(updatedPoints);
+						}}
+					/>
         </div>
       </div>
     </>

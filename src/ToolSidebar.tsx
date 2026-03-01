@@ -13,7 +13,7 @@ export default function ToolSidebar({
 }: ToolSidebarProps) {
   return (
     <>
-      <div id="tools-section" className="w-90 flex flex-col relative border-r border-neutral-400">
+      <div id="available-tools-section" className="w-full flex flex-col relative">
         <div className="bg-neutral-100 py-2 px-1 h-12 w-full border-b border-neutral-400 flex flex-row justify-between items-center">
           <p className="font-bold">Actions</p>
         </div>
