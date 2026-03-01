@@ -198,11 +198,16 @@ function App() {
                     hoveredPoint?.id === point.id
                       ? "fill-blue-500 cursor-default"
                       : selectedPoint?.id === point.id
-                      ? "fill-blue-500"
+                      ? "fill-blue-700"
                       : "fill-neutral-500"
                   }`}
                   onClick={() => {
-                    setSelectedPoint(point);
+										if (selectedPoint !== null && selectedPoint.id === point.id) {
+											setSelectedPoint(null);
+										} else {
+											setSelectedPoint(point);
+
+										}
                   }}
                   onMouseEnter={() => {
                     setHoveredPoint(point);
